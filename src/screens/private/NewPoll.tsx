@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,36 +9,29 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-} from "react-native";
-import { Poll } from "../../components/poll/Poll";
-import { Header } from "../../components/header/Header";
-import { Category } from "../../components/category/Category";
-import { globalStyles } from "../../components/globalStyles/GlobalStyles";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { Modal, Portal, Provider } from "react-native-paper";
-import { GlobalContext } from "../../context/GlobalState";
-import { BASE_URL } from "../../utils/baseurl";
-import * as ImagePicker from "expo-image-picker";
-import { ActivityIndicator } from "react-native-paper";
+} from 'react-native';
+import { Poll } from '../../components/poll/Poll';
+import { Header } from '../../components/header/Header';
+import { Category } from '../../components/category/Category';
+import { globalStyles } from '../../components/globalStyles/GlobalStyles';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Modal, Portal, Provider } from 'react-native-paper';
+
+import { BASE_URL } from '../../utils/baseurl';
+import * as ImagePicker from 'expo-image-picker';
+import { ActivityIndicator } from 'react-native-paper';
 export const NewPoll = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
   const [choices, setChoices] = useState([]);
-  const [choice, setChoice] = useState("");
+  const [choice, setChoice] = useState('');
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
-  const { data, getCurrentUser, fetchStart, fetchFinish, authChecker } =
-    useContext(GlobalContext);
-
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const containerStyle = {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 20,
     marginLeft: 10,
     marginRight: 10,
@@ -46,15 +39,15 @@ export const NewPoll = ({ navigation }) => {
     borderWidth: 0,
   };
 
-  const handleAddChoice = () => {
-    if (choice === "") return;
+  /*const handleAddChoice = () => {
+    if (choice === '') return;
     const newArr = {
       idx: choices.length + 1,
       choice: choice,
       votes: 0,
     };
     setChoices([...choices, newArr]);
-    setChoice("");
+    setChoice('');
     hideModal();
   };
 
@@ -68,7 +61,7 @@ export const NewPoll = ({ navigation }) => {
     fetchStart();
     setLoading(true);
 
-    if (title === "" || description === "" || choices.length === 0) {
+    if (title === '' || description === '' || choices.length === 0) {
       fetchFinish();
       setLoading(false);
       return;
@@ -86,10 +79,10 @@ export const NewPoll = ({ navigation }) => {
     };
 
     fetch(BASE_URL.polls, {
-      method: "POST",
-      mode: "cors",
+      method: 'POST',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `${data.token}`,
       },
       body: JSON.stringify(body),
@@ -98,16 +91,16 @@ export const NewPoll = ({ navigation }) => {
       .then((data) => {
         fetchFinish();
         setChoices([]);
-        setTitle("");
-        setDescription("");
+        setTitle('');
+        setDescription('');
         setLoading(false);
         console.log(data);
       })
       .catch((err) => {
         fetchFinish();
         setChoices([]);
-        setTitle("");
-        setDescription("");
+        setTitle('');
+        setDescription('');
         console.log(err);
         setLoading(false);
       });
@@ -129,11 +122,11 @@ export const NewPoll = ({ navigation }) => {
     }
   };
   useEffect(() => {
-    const logout = navigation.addListener("focus", () => {
+    const logout = navigation.addListener('focus', () => {
       authChecker();
     });
     return logout;
-  }, [navigation]);
+  }, [navigation]);*/
   return (
     <Provider>
       <SafeAreaView style={styles.container}>
@@ -230,9 +223,9 @@ export const NewPoll = ({ navigation }) => {
           <View style={{ marginBottom: 10 }}>
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 marginBottom: 5,
               }}
             >
@@ -244,7 +237,7 @@ export const NewPoll = ({ navigation }) => {
                   style={[
                     globalStyles.primaryTxt,
                     globalStyles.fontBold,
-                    { flexDirection: "row", alignItems: "center" },
+                    { flexDirection: 'row', alignItems: 'center' },
                   ]}
                 >
                   <Icon name="plus" size={12} style={{ marginRight: 5 }} />
@@ -312,8 +305,8 @@ export const NewPoll = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    backgroundColor: "#fff",
+    height: '100%',
+    backgroundColor: '#fff',
   },
   pollsWrapper: {
     paddingTop: 15,
@@ -324,7 +317,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
   },
   choice: {
     height: 50,
@@ -332,17 +325,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    borderColor: '#ddd',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   formInputMulti: {
     borderRadius: 15,
     marginBottom: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
   },
   form: {
     padding: 20,
@@ -351,28 +344,28 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
     padding: 15,
-    backgroundColor: "#008CFF",
+    backgroundColor: '#008CFF',
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#fff",
-    overflow: "hidden",
+    borderColor: '#fff',
+    overflow: 'hidden',
   },
   textButton: {
-    color: "#008CFF",
+    color: '#008CFF',
   },
   buttonText: {
-    color: "#fff",
-    textAlign: "center",
+    color: '#fff',
+    textAlign: 'center',
   },
   uploadBox: {
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 15,
-    borderStyle: "dashed",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    borderStyle: 'dashed',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
     marginBottom: 10,
   },

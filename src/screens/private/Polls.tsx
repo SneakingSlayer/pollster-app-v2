@@ -16,16 +16,9 @@ import { Category } from '../../components/category/Category';
 import { globalStyles } from '../../components/globalStyles/GlobalStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { GlobalContext } from '../../context/GlobalState';
 import { BASE_URL } from '../../utils/baseurl';
 import { AdminPoll } from '../../components/adminPoll/AdminPoll';
 export const Polls = ({ navigation }) => {
-  const { data, getCurrentUser, loading, authChecker } =
-    useContext(GlobalContext);
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
   const [polls, setPolls] = useState([]);
 
   const renderItem = ({ item }) => (
@@ -43,13 +36,6 @@ export const Polls = ({ navigation }) => {
       />
     </View>
   );
-
-  useEffect(() => {
-    const logout = navigation.addListener('focus', () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

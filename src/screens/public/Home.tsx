@@ -9,21 +9,19 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import { Poll } from '../components/poll/Poll';
-import { Header } from '../components/header/Header';
-import { Category } from '../components/category/Category';
-import { BASE_URL } from '../utils/baseurl';
-import { GlobalContext } from '../context/GlobalState';
+import { Poll } from '../../components/poll/Poll';
+import { Header } from '../../components/header/Header';
+import { Category } from '../../components/category/Category';
+import { BASE_URL } from '../../utils/baseurl';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 export const Home = () => {
   const Tab = createBottomTabNavigator();
   const [polls, setPolls] = useState([]);
   const [votes, setVotes] = useState([]);
-  const { loading, getCurrentUser, data, authChecker } =
-    useContext(GlobalContext);
 
-  const fetchPolls = () => {
+  /* const fetchPolls = () => {
     fetch(BASE_URL.polls, {
       method: 'GET',
       mode: 'cors',
@@ -74,7 +72,7 @@ export const Home = () => {
     return ids;
   };
 
-  // console.log(polls);
+  // console.log(polls);*/
 
   const renderItem = ({ item }) => (
     <View>
@@ -86,7 +84,7 @@ export const Home = () => {
         votes={item.totalVotes}
         id={item._id}
         choices={item.choices}
-        voted={votePollIDs().includes(item._id) ? true : false}
+        //voted={votePollIDs().includes(item._id) ? true : false}
         date={item.date_created}
         img={item.img}
       />

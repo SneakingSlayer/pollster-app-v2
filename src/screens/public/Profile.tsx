@@ -10,27 +10,16 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import { globalStyles } from '../components/globalStyles/GlobalStyles';
+import { globalStyles } from '../../components/globalStyles/GlobalStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { RadioButton, ProgressBar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { BASE_URL } from '../utils/baseurl';
-import { GlobalContext } from '../context/GlobalState';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { randomColor } from '../utils/colors';
-import { formatDate } from '../utils/dateformat';
+
+import { randomColor } from '../../utils/colors';
+import { formatDate } from '../../utils/dateformat';
 
 export const Profile = ({ navigation }) => {
-  const {
-    fetchStart,
-    fetchFinish,
-    getCurrentUser,
-    data,
-    loading,
-    handleLogout,
-    authChecker,
-  } = useContext(GlobalContext);
   const [user, setUser] = useState([]);
   const [votes, setVotes] = useState([]);
   /*useEffect(() => {
@@ -102,7 +91,7 @@ export const Profile = ({ navigation }) => {
                 <Icon name="chevron-left" size={25} color="#fff" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => handleLogout()}>
+              <TouchableOpacity onPress={() => {}}>
                 <Text style={[globalStyles.fontLight, globalStyles.fontBold]}>
                   Sign out
                 </Text>

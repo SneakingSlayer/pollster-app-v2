@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,55 +10,23 @@ import {
   Image,
   ImageBackground,
   FlatList,
-} from "react-native";
-import { globalStyles } from "../components/globalStyles/GlobalStyles";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { useNavigation } from "@react-navigation/native";
-import { RadioButton, ProgressBar } from "react-native-paper";
-import { ScrollView } from "react-native-gesture-handler";
-import { BASE_URL } from "../utils/baseurl";
-import { GlobalContext } from "../context/GlobalState";
-import { formatDate } from "../utils/dateformat";
+} from 'react-native';
+import { globalStyles } from '../../components/globalStyles/GlobalStyles';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
+import { RadioButton, ProgressBar } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+import { formatDate } from '../../utils/dateformat';
 export const Votes = ({ navigation }) => {
-  const { data, getCurrentUser, loading, authChecker } =
-    useContext(GlobalContext);
   const [votes, setVotes] = useState([]);
   const [apiLoading, setApiLoading] = useState(false);
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
-  useEffect(() => {
-    fetchVotes();
-  }, [loading]);
-
-  const fetchVotes = () => {
-    setApiLoading(true);
-    fetch(BASE_URL.votes + `/${data.id}`, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setVotes(data);
-        setApiLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setApiLoading(false);
-      });
-  };
 
   const renderItem = ({ item }) => (
     <View
       style={[
         {
           borderBottomWidth: 0.5,
-          borderBottomColor: "#ddd",
+          borderBottomColor: '#ddd',
           padding: 20,
         },
       ]}
@@ -78,14 +46,14 @@ export const Votes = ({ navigation }) => {
       <View
         style={[
           {
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginTop: 5,
           },
         ]}
       >
-        <View style={[{ flexDirection: "row", alignItems: "center" }]}>
+        <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
           <View style={[styles.box]}>
             <Text style={[globalStyles.fontBold, globalStyles.fontLight]}>
               {item.poster_name.charAt(0).toUpperCase()}
@@ -108,13 +76,6 @@ export const Votes = ({ navigation }) => {
       </View>
     </View>
   );
-
-  useEffect(() => {
-    const logout = navigation.addListener("focus", () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -209,16 +170,16 @@ export const Votes = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   box: {
-    backgroundColor: "#777",
+    backgroundColor: '#777',
     height: 30,
     width: 30,
     borderRadius: 100,
     marginRight: 5,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

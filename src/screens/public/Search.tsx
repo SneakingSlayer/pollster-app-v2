@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,33 +10,31 @@ import {
   Image,
   ScrollView,
   FlatList,
-} from "react-native";
-import { BASE_URL } from "../utils/baseurl";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+} from 'react-native';
 
-import { GlobalContext } from "../context/GlobalState";
-import { globalStyles } from "../components/globalStyles/GlobalStyles";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { SearchResult } from "../components/searchResult/SearchResult";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { globalStyles } from '../../components/globalStyles/GlobalStyles';
+
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { SearchResult } from '../../components/searchResult/SearchResult';
 export const Search = ({ navigation }) => {
-  const { data, getCurrentUser, authChecker } = useContext(GlobalContext);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
-  const [msg, setMsg] = useState("");
-  const handleSearch = () => {
+  const [msg, setMsg] = useState('');
+  /* const handleSearch = () => {
     setLoading(true);
-    setMsg("");
-    if (search === "") {
+    setMsg('');
+    if (search === '') {
       setLoading(false);
-      setMsg("");
+      setMsg('');
       return;
     }
     fetch(BASE_URL.search + `/${search}`, {
-      method: "GET",
-      mode: "cors",
+      method: 'GET',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `${data.token}`,
       },
     })
@@ -45,14 +43,14 @@ export const Search = ({ navigation }) => {
         setResults(data);
         setLoading(false);
         console.log(data);
-        if (data.length === 0) setMsg("No results found.");
+        if (data.length === 0) setMsg('No results found.');
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
-        setMsg("");
+        setMsg('');
       });
-  };
+  };* */
 
   const renderItem = ({ item }) => (
     <SearchResult
@@ -67,23 +65,16 @@ export const Search = ({ navigation }) => {
     />
   );
 
-  useEffect(() => {
-    const logout = navigation.addListener("focus", () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={[{ height: 90, paddingLeft: 20, paddingRight: 20 }]}>
         <View
           style={[
             {
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: "auto",
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: 'auto',
             },
           ]}
         >
@@ -95,11 +86,11 @@ export const Search = ({ navigation }) => {
           </TouchableOpacity>
           <TextInput
             placeholder="Search polls"
-            style={[{ flex: 11, position: "relative" }, styles.formInput]}
+            style={[{ flex: 11, position: 'relative' }, styles.formInput]}
             onChangeText={(e) => setSearch(e)}
           />
           <TouchableOpacity
-            style={[{ position: "absolute", right: 15, top: 9 }]}
+            style={[{ position: 'absolute', right: 15, top: 9 }]}
             onPress={handleSearch}
           >
             <Icon name="search" size={20} color="#777" />
@@ -146,7 +137,7 @@ export const Search = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   formInput: {
     height: 40,
@@ -154,8 +145,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
-    color: "#777",
+    borderColor: '#ddd',
+    color: '#777',
   },
   resultWrapper: {
     marginTop: 0,

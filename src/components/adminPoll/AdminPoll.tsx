@@ -14,15 +14,13 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Modal, Portal, Provider } from 'react-native-paper';
 import { globalStyles } from '../globalStyles/GlobalStyles';
 import { BASE_URL } from '../../utils/baseurl';
-import { GlobalContext } from '../../context/GlobalState';
 import { useNavigation } from '@react-navigation/native';
 import { formatDate } from '../../utils/dateformat';
 export const AdminPoll = (props) => {
   const navigation = useNavigation();
   const [confirm, setConfirm] = useState(false);
-  const { data, getCurrentUser, loading, fetchStart, fetchFinish } =
-    useContext(GlobalContext);
-  const handleDelete = () => {
+
+  /** const handleDelete = () => {
     fetchStart();
     fetch(BASE_URL.polls + `/${props.id}`, {
       method: 'DELETE',
@@ -41,7 +39,7 @@ export const AdminPoll = (props) => {
         fetchFinish();
         console.log(err);
       });
-  };
+  }; */
   return (
     <Provider>
       <View style={styles.container}>

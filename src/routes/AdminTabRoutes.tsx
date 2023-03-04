@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NewPoll } from '../screens/adminScreens/NewPoll';
-import { Polls } from '../screens/adminScreens/Polls';
-import { Users } from '../screens/adminScreens/Users';
-import { Search } from '../screens/Search';
-import { Profile } from '../screens/Profile';
+import { NewPoll } from '../screens/private/NewPoll';
+import { Polls } from '../screens/private/Polls';
+import { Users } from '../screens/private/Users';
+import { Search } from '../screens/public/Search';
+import { Profile } from '../screens/public/Profile';
 import { Header } from '../components/header/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 const Tab = createBottomTabNavigator();

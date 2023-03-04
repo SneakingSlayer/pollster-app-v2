@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,79 +9,97 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-} from "react-native";
-import { BASE_URL } from "../utils/baseurl";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+} from 'react-native';
 
-import { GlobalContext } from "../context/GlobalState";
-import {globalStyles} from '../components/globalStyles/GlobalStyles'
+import { globalStyles } from '../../components/globalStyles/GlobalStyles';
 
 export const Register = ({ navigation }) => {
-  const { data, getCurrentUser } = useContext(GlobalContext);
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState({status: false, msg: ""})
+  const [error, setError] = useState({ status: false, msg: '' });
 
-  const [firstFocused, setFirstFocused] = useState(false)
-  const [lastFocused, setLastFocused] = useState(false)
-  const [emailFocused, setEmailFocused] = useState(false)
+  const [firstFocused, setFirstFocused] = useState(false);
+  const [lastFocused, setLastFocused] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
   const [userFocused, setUserFocused] = useState(false);
   const [passFocused, setPassFocused] = useState(false);
 
-  const [fname, setFname] = useState("")
-  const [lname, setLname] = useState("")
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("");
+  const [fname, setFname] = useState('');
+  const [lname, setLname] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handelRegister = () =>{
-    setError({status: false, msg: ""})
-    if (fname==="" || lname==="" || username===""  || email==="" || password==="" ){
-      setError({status: true, msg: "Fill all empty fields."})
-      return
+  const handelRegister = () => {
+    setError({ status: false, msg: '' });
+    if (
+      fname === '' ||
+      lname === '' ||
+      username === '' ||
+      email === '' ||
+      password === ''
+    ) {
+      setError({ status: true, msg: 'Fill all empty fields.' });
+      return;
     }
     const body = {
       firstname: fname,
       lastname: lname,
       email: email,
       username: username,
-      password: password
-    }
+      password: password,
+    };
     fetch(BASE_URL.register, {
-      method: "POST",
-      mode: "cors",
+      method: 'POST',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
-    .then(res => res.json())
-    .then(data => {
-     if(data.status === 400) {setError({status: true, msg: data.msg}); return;} 
-     navigation.navigate("login")
-    }).catch(err => {
-      console.log(err)
-    })
-  }
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 400) {
+          setError({ status: true, msg: data.msg });
+          return;
+        }
+        navigation.navigate('login');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  return (
-    <SafeAreaView style={styles.container}>
+  return <></>;
+};
+
+{
+  /**  <SafeAreaView style={styles.container}>
       <View style={styles.logoWrapper}>
         <Image
           style={styles.logo}
-          source={require("../assets/logos/login-logo.png")}
+          source={require('../assets/logos/login-logo.png')}
         />
       </View>
-      {error.status? <View>
-      <Text style={[{textAlign: "center", marginBottom: 20},  globalStyles.fontDanger, globalStyles.fontItalic]}>{error.msg}</Text>
-      </View>: null}
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      {error.status ? (
+        <View>
+          <Text
+            style={[
+              { textAlign: 'center', marginBottom: 20 },
+              globalStyles.fontDanger,
+              globalStyles.fontItalic,
+            ]}
+          >
+            {error.msg}
+          </Text>
+        </View>
+      ) : null}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <TextInput
           placeholder="First name"
           style={
             firstFocused
-              ? [styles.inputFocused, { width: "48.5%" }]
-              : [styles.formInput, { width: "48.5%" }]
+              ? [styles.inputFocused, { width: '48.5%' }]
+              : [styles.formInput, { width: '48.5%' }]
           }
           onFocus={() => setFirstFocused(true)}
           onBlur={() => setFirstFocused(false)}
@@ -92,8 +110,8 @@ export const Register = ({ navigation }) => {
           placeholder="Last name"
           style={
             lastFocused
-              ? [styles.inputFocused, { width: "48.5%" }]
-              : [styles.formInput, { width: "48.5%" }]
+              ? [styles.inputFocused, { width: '48.5%' }]
+              : [styles.formInput, { width: '48.5%' }]
           }
           onFocus={() => setLastFocused(true)}
           onBlur={() => setLastFocused(false)}
@@ -137,23 +155,22 @@ export const Register = ({ navigation }) => {
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
       <Text style={styles.center}>
-        Already have an account?{" "}
+        Already have an account?{' '}
         <Text
           style={styles.textButton}
-          onPress={() => navigation.navigate("login")}
+          onPress={() => navigation.navigate('login')}
         >
           Sign in here
         </Text>
       </Text>
-    </SafeAreaView>
-  );
-};
+    </SafeAreaView>*/
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    justifyContent: 'center',
     paddingLeft: 50,
     paddingRight: 50,
   },
@@ -163,8 +180,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
-    color: "#777",
+    borderColor: '#ddd',
+    color: '#777',
   },
   inputFocused: {
     height: 50,
@@ -172,48 +189,48 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#008CFF",
-    color: "#008CFF",
+    borderColor: '#008CFF',
+    color: '#008CFF',
   },
   formButton: {
     marginTop: 5,
     marginBottom: 10,
     padding: 15,
-    backgroundColor: "#008CFF",
+    backgroundColor: '#008CFF',
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#fff",
-    overflow: "hidden",
+    borderColor: '#fff',
+    overflow: 'hidden',
   },
   textButton: {
-    color: "#008CFF",
+    color: '#008CFF',
   },
   buttonText: {
-    color: "#fff",
-    textAlign: "center",
+    color: '#fff',
+    textAlign: 'center',
   },
   center: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   logo: {
     height: 129,
     width: 136,
   },
   logoWrapper: {
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "row",
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
     marginBottom: 20,
   },
   disabledButton: {
     marginTop: 5,
     marginBottom: 10,
     padding: 15,
-    backgroundColor: "#008CFF",
+    backgroundColor: '#008CFF',
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#fff",
-    overflow: "hidden",
+    borderColor: '#fff',
+    overflow: 'hidden',
     opacity: 0.1,
   },
 });

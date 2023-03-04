@@ -1,21 +1,17 @@
 import React, { useEffect, useContext } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Home } from '../screens/Home';
-import { Profile } from '../screens/Profile';
-import { Votes } from '../screens/Votes';
-import { Search } from '../screens/Search';
+import { Home } from '../screens/public/Home';
+import { Profile } from '../screens/public/Profile';
+import { Votes } from '../screens/public/Votes';
+import { Search } from '../screens/public/Search';
 import { Header } from '../components/header/Header';
-import { NewPoll } from '../screens/adminScreens/NewPoll';
+import { NewPoll } from '../screens/private/NewPoll';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { AccessControl } from '../utils/accesscontrol';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GlobalContext } from '../context/GlobalState';
+
 const Tab = createBottomTabNavigator();
 export const UserTabRoutes = () => {
-  const { getCurrentUser, data, loading } = useContext(GlobalContext);
-  useEffect(() => {
-    getCurrentUser();
-  }, [loading]);
   // console.log(data);
   return (
     <Tab.Navigator
@@ -50,7 +46,7 @@ export const UserTabRoutes = () => {
           tabBarShowLabel: false,
         }}
       />
-      {!data ? null : data.permissions.includes(AccessControl.can_add_polls) ? (
+      {/*!data ? null : data.permissions.includes(AccessControl.can_add_polls) ? (
         <Tab.Screen
           name="Add a Poll"
           component={NewPoll}
@@ -67,7 +63,7 @@ export const UserTabRoutes = () => {
             tabBarShowLabel: false,
           }}
         />
-      ) : null}
+        ) : null*/}
       <Tab.Screen
         name="Votes"
         component={Votes}
