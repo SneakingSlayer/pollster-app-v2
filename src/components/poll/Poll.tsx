@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,33 +8,25 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { useNavigation } from "@react-navigation/native";
-import { formatDate } from "../../utils/dateformat";
-export const Poll = (props) => {
-  const navigation = useNavigation();
-  const navigateToPoll = () => {
-    navigation.navigate("poll", {
-      pollID: props.id,
-      title: props.title,
-      description: props.description,
-      firstname: props.firstname,
-      lastname: props.lastname,
-      date: props.date,
-    });
-  };
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
+import { formatDate } from '../../utils/dateformat';
+import { PollProps } from '../../types/globalTypes';
+export const Poll = ({ props }: { props: PollProps }) => {
+  const navigation = useNavigation<any>();
+
   return (
     <View style={styles.container}>
       <View style={styles.userWrapper}>
         <View style={styles.user}>
           <Image
             style={styles.profilePicture}
-            source={require("../../assets/images/user.jpg")}
+            source={require('../../assets/images/user.jpg')}
           />
           <View>
             <Text style={[styles.fontSm, styles.fontBold]}>
-              {props.firstname + " " + props.lastname}
+              {props.firstname + ' ' + props.lastname}
             </Text>
             <Text style={[styles.fontXs, styles.fontMuted]}>
               Malayan Colleges
@@ -42,7 +34,7 @@ export const Poll = (props) => {
           </View>
         </View>
         <Text style={[styles.fontXs, styles.fontMuted]}>
-          {formatDate(props.date)}
+          {formatDate(props.createdAt)}
         </Text>
       </View>
       <View>
@@ -52,22 +44,28 @@ export const Poll = (props) => {
         </Text>
       </View>
       <View style={styles.imgWrapper}>
-        {props.img !== null ? (
+        {/*props.img !== null ? (
           <Image style={styles.pollImg} source={{ uri: props.img }} />
-        ) : null}
+        ) : null*/}
       </View>
       <View style={styles.ctaWrapper}>
         <View style={styles.leftButtons}>
           <Text style={[styles.fontMuted, styles.fontBold]}>
-            <Icon name="arrow-up" size={15} color="#777" /> {props.votes} votes
+            <Icon name="arrow-up" size={15} color="#777" /> {props.totalVotes}{' '}
+            votes
           </Text>
-          <TouchableOpacity style={styles.viewPollBtn} onPress={navigateToPoll}>
+          <TouchableOpacity
+            style={styles.viewPollBtn}
+            onPress={() => {
+              navigation.navigate('poll', { ...props });
+            }}
+          >
             <Text style={[styles.primaryTxt, styles.fontBold]}>
               <Icon name="heart" size={15} color="#008CFF" /> View Poll
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={props.voted ? styles.pill : styles.disabledPill}>
+        {/**<View style={props.voted ? styles.pill : styles.disabledPill}>
           {props.voted ? (
             <Text style={[styles.primaryTxt, styles.fontBold, styles.fontSm]}>
               <Icon name="check" size={12} color="#008CFF" /> Voted
@@ -77,7 +75,7 @@ export const Poll = (props) => {
               <Icon name="times" size={12} color="#777" /> Not voted
             </Text>
           )}
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -89,21 +87,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderBottomWidth: 0.5,
     paddingBottom: 20,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
   },
   userWrapper: {
-    justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   user: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 7,
   },
   pollTitle: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   fontReg: {
     fontSize: 14,
@@ -115,30 +113,30 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   fontBold: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   fontMuted: {
-    color: "#777",
+    color: '#777',
   },
   profilePicture: {
     marginRight: 5,
     borderRadius: 100,
     width: 30,
     height: 30,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   leftButtons: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   primaryTxt: {
-    color: "#008CFF",
+    color: '#008CFF',
   },
   viewPollBtn: {
     marginLeft: 10,
   },
   pill: {
-    backgroundColor: "#EBF5FF",
+    backgroundColor: '#EBF5FF',
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 5,
@@ -146,13 +144,13 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   ctaWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 15,
   },
   pollImg: {
-    width: "100%",
+    width: '100%',
     height: 240,
     borderRadius: 25,
   },
@@ -160,7 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   disabledPill: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 5,

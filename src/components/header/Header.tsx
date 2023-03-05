@@ -10,14 +10,20 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 
-import { BASE_URL } from '../../utils/baseurl';
 import { randomColor } from '../../utils/colors';
 import { globalStyles } from '../globalStyles/GlobalStyles';
+
+import { useAppDispatch } from '../../redux/hooks';
+import { logout } from '../../redux/slices/authSlice';
+
 export const Header = () => {
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -27,14 +33,9 @@ export const Header = () => {
             source={require('../../assets/logos/logolandscape.png')}
           />
         </View>
-        {/**  <TouchableOpacity
-          style={styles.search}
-          onPress={
-           () => handleLogout()
-          }
-        >
+        <TouchableOpacity onPress={handleLogout}>
           <Text>Logout</Text>
-        </TouchableOpacity>*/}
+        </TouchableOpacity>
         <View style={[styles.profilePictureWrapper]}>
           <Text style={[globalStyles.fontLight, globalStyles.fontBold]}>
             {

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,21 +9,20 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-} from "react-native";
-import { Poll } from "../poll/Poll";
+} from 'react-native';
+import { Poll } from '../poll/Poll';
 
-import { globalStyles } from "../globalStyles/GlobalStyles";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import { globalStyles } from '../globalStyles/GlobalStyles';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { GlobalContext } from "../../context/GlobalState";
-import { BASE_URL } from "../../utils/baseurl";
-import { AdminPoll } from "../adminPoll/AdminPoll";
-import { formatDate } from "../../utils/dateformat";
-import { Modal, Portal, Provider } from "react-native-paper";
+import { BASE_URL } from '../../utils/baseurl';
+import { AdminPoll } from '../adminPoll/AdminPoll';
+import { formatDate } from '../../utils/dateformat';
+import { Modal, Portal, Provider } from 'react-native-paper';
 export const AdminUsers = (props) => {
   const { openModal } = props;
 
-  const { fetchStart, fetchFinish, data, getCurrentUser } =
+  /*const { fetchStart, fetchFinish, data, getCurrentUser } =
     useContext(GlobalContext);
   const [confirm, setConfirm] = useState(false);
   useEffect(() => {
@@ -32,10 +31,10 @@ export const AdminUsers = (props) => {
   const handleDelete = () => {
     fetchStart();
     fetch(BASE_URL.delete + `/${props.id}`, {
-      method: "GET",
-      mode: "cors",
+      method: 'GET',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `${data.token}`,
       },
     })
@@ -46,19 +45,19 @@ export const AdminUsers = (props) => {
       .catch((err) => {
         fetchFinish();
       });
-  };
+  };*/
 
   return (
     <View
       style={[
         {
-          flexDirection: "row",
-          width: "100%",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          width: '100%',
+          justifyContent: 'space-between',
           paddingTop: 15,
           paddingBottom: 15,
           borderBottomWidth: 0.5,
-          borderBottomColor: "#ddd",
+          borderBottomColor: '#ddd',
           paddingLeft: 20,
           paddingRight: 20,
         },
@@ -69,14 +68,14 @@ export const AdminUsers = (props) => {
           @{props.username}
         </Text>
         <Text style={[globalStyles.fontBold]}>
-          {props.firstname + " " + props.lastname}
+          {props.firstname + ' ' + props.lastname}
         </Text>
         <Text style={[globalStyles.fontXs, globalStyles.fontMuted]}>
           {formatDate(props.date_created)}
         </Text>
       </View>
       {!confirm ? (
-        <View style={[{ marginTop: "auto", flexDirection: "row" }]}>
+        <View style={[{ marginTop: 'auto', flexDirection: 'row' }]}>
           <TouchableOpacity
             onPress={() => setConfirm(true)}
             style={[{ marginRight: 10 }]}
@@ -89,16 +88,16 @@ export const AdminUsers = (props) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[{ marginTop: "auto" }]}
+            style={[{ marginTop: 'auto' }]}
             onPress={() => setConfirm(true)}
           >
-            <Text style={[{ color: "#fa2d37" }, globalStyles.fontBold]}>
+            <Text style={[{ color: '#fa2d37' }, globalStyles.fontBold]}>
               <Icon name="times" size={15} color="#fa2d37" /> Delete
             </Text>
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={[{ marginTop: "auto", flexDirection: "row" }]}>
+        <View style={[{ marginTop: 'auto', flexDirection: 'row' }]}>
           <TouchableOpacity
             style={[{ marginRight: 10 }]}
             onPress={() => {
@@ -123,8 +122,8 @@ export const AdminUsers = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    backgroundColor: "#fff",
+    height: '100%',
+    backgroundColor: '#fff',
   },
   usersWrapper: {
     paddingLeft: 20,

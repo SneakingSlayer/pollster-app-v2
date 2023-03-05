@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,32 +10,24 @@ import {
   TouchableOpacity,
   FlatList,
   Switch,
-} from "react-native";
-import { Poll } from "../../components/poll/Poll";
-import { Header } from "../../components/header/Header";
-import { Category } from "../../components/category/Category";
-import { globalStyles } from "../../components/globalStyles/GlobalStyles";
-import Icon from "react-native-vector-icons/FontAwesome5";
+} from 'react-native';
+import { Poll } from '../../components/poll/Poll';
+import { Header } from '../../components/header/Header';
+import { Category } from '../../components/category/Category';
+import { globalStyles } from '../../components/globalStyles/GlobalStyles';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { GlobalContext } from "../../context/GlobalState";
-import { BASE_URL } from "../../utils/baseurl";
-import { AdminPoll } from "../../components/adminPoll/AdminPoll";
-import { formatDate } from "../../utils/dateformat";
-import { AdminUsers } from "../../components/adminUsers/AdminUsers";
-import { render } from "react-dom";
-import { Modal, Portal, Provider } from "react-native-paper";
+import { GlobalContext } from '../../context/GlobalState';
+import { BASE_URL } from '../../utils/baseurl';
+import { AdminPoll } from '../../components/adminPoll/AdminPoll';
+import { formatDate } from '../../utils/dateformat';
+import { AdminUsers } from '../../components/adminUsers/AdminUsers';
+import { render } from 'react-dom';
+import { Modal, Portal, Provider } from 'react-native-paper';
 
-import { Picker } from "@react-native-picker/picker";
+import { Picker } from '@react-native-picker/picker';
 
 export const Users = ({ navigation }) => {
-  const {
-    data,
-    getCurrentUser,
-    loading,
-    fetchFinish,
-    fetchStart,
-    authChecker,
-  } = useContext(GlobalContext);
   const [confirm, setConfirm] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
   const [permissions, setPermissions] = useState([]);
@@ -44,63 +36,13 @@ export const Users = ({ navigation }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const hideModal = () => setModalOpen(false);
 
-  const [currentUserID, setCurrentUserID] = useState("");
+  const [currentUserID, setCurrentUserID] = useState('');
   const [currentUserPermissions, setCurrentUserPermissions] = useState([]);
 
-  const [permissionValue, setPermissionValue] = useState("");
-
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchPermissions();
-  }, [loading]);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchPermissions();
-  }, [apiLoading]);
-
-  const fetchUsers = () => {
-    fetch(BASE_URL.user, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const fetchPermissions = () => {
-    fetch(BASE_URL.permissions, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setPermissions(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const [permissionValue, setPermissionValue] = useState('');
 
   const containerStyle = {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 20,
     marginLeft: 10,
     marginRight: 10,
@@ -110,7 +52,7 @@ export const Users = ({ navigation }) => {
 
   const handleAddPermissions = () => {
     setApiLoading(true);
-    if (currentUserID === "" || permissionValue === "") {
+    if (currentUserID === '' || permissionValue === '') {
       setApiLoading(false);
       return;
     }
@@ -120,10 +62,10 @@ export const Users = ({ navigation }) => {
     };
 
     fetch(BASE_URL.assign, {
-      method: "PUT",
-      mode: "cors",
+      method: 'PUT',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `${data.token}`,
       },
       body: JSON.stringify(body),
@@ -143,7 +85,7 @@ export const Users = ({ navigation }) => {
 
   const handleRemovePermissions = () => {
     setApiLoading(true);
-    if (currentUserID === "" || permissionValue === "") {
+    if (currentUserID === '' || permissionValue === '') {
       setApiLoading(false);
       return;
     }
@@ -153,10 +95,10 @@ export const Users = ({ navigation }) => {
     };
 
     fetch(BASE_URL.unassign, {
-      method: "PUT",
-      mode: "cors",
+      method: 'PUT',
+      mode: 'cors',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `${data.token}`,
       },
       body: JSON.stringify(body),
@@ -175,7 +117,7 @@ export const Users = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const logout = navigation.addListener("focus", () => {
+    const logout = navigation.addListener('focus', () => {
       authChecker();
     });
     return logout;
@@ -194,8 +136,8 @@ export const Users = ({ navigation }) => {
               Assign Roles
             </Text>
             <Text>
-              User permissions{" "}
-              {currentUserPermissions.map((permission) => permission + " ")}
+              User permissions{' '}
+              {currentUserPermissions.map((permission) => permission + ' ')}
             </Text>
             <Picker
               onValueChange={(e) => setPermissionValue(e)}
@@ -216,9 +158,9 @@ export const Users = ({ navigation }) => {
             <View
               style={[
                 {
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 },
               ]}
             >
@@ -227,12 +169,12 @@ export const Users = ({ navigation }) => {
                   {
                     marginBottom: 10,
                     padding: 15,
-                    backgroundColor: "transparent",
+                    backgroundColor: 'transparent',
                     borderRadius: 15,
                     borderWidth: 2,
-                    borderColor: "#008CFF",
-                    overflow: "hidden",
-                    width: "49%",
+                    borderColor: '#008CFF',
+                    overflow: 'hidden',
+                    width: '49%',
                   },
                 ]}
                 onPress={handleRemovePermissions}
@@ -240,8 +182,8 @@ export const Users = ({ navigation }) => {
                 <Text
                   style={[
                     {
-                      color: "#008CFF",
-                      textAlign: "center",
+                      color: '#008CFF',
+                      textAlign: 'center',
                     },
                   ]}
                 >
@@ -286,21 +228,21 @@ export const Users = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
-    backgroundColor: "#fff",
+    height: '100%',
+    backgroundColor: '#fff',
   },
   formButton: {
     marginBottom: 10,
     padding: 15,
-    backgroundColor: "#008CFF",
+    backgroundColor: '#008CFF',
     borderRadius: 15,
     borderWidth: 2,
-    borderColor: "#008CFF",
-    overflow: "hidden",
-    width: "49%",
+    borderColor: '#008CFF',
+    overflow: 'hidden',
+    width: '49%',
   },
   buttonText: {
-    color: "#fff",
-    textAlign: "center",
+    color: '#fff',
+    textAlign: 'center',
   },
 });

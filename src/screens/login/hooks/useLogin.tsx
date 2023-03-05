@@ -62,11 +62,12 @@ const useLogin = () => {
       dispatch(setAuth(result));
       console.log('Sign in success!');
     } catch (error: any) {
-      console.log(error);
-      setUserErrors((prev) => ({
-        ...prev,
-        [error?.data?.msg?.fieldName]: error?.data?.msg?.msg,
-      }));
+      if (error) {
+        setUserErrors((prev) => ({
+          ...prev,
+          [error?.data?.msg?.fieldName ?? 'username']: error?.data?.msg?.msg,
+        }));
+      }
     }
   };
 

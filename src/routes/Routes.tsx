@@ -8,11 +8,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //Pages
 import { Login } from '../screens/login/Login';
-import { Home } from '../screens/Home';
-import { Poll } from '../screens/Poll';
-import { Profile } from '../screens/Profile';
-import { Register } from '../screens/Register';
-import { Search } from '../screens/Search';
+import { Home } from '../screens/public/Home';
+import { Poll } from '../screens/public/Poll';
+import { Profile } from '../screens/public/Profile';
+import { Register } from '../screens/public/Register';
+import { Search } from '../screens/public/Search';
 
 import { UserTabRoutes } from './UserTabRoutes';
 import { AdminTabRoutes } from './AdminTabRoutes';
@@ -26,6 +26,7 @@ const navigationRef = createNavigationContainerRef();
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
 export const Routes = () => {
   const dispatch = useAppDispatch();
   const data = useAppSelector((state) => state.auth);
