@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { BASE_URL } from '../../utils/baseurl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -44,6 +44,9 @@ export const Login = ({ navigation }: any) => {
           source={require('../../assets/logos/login-logo.png')}
         />
       </View>
+      {userErrors?.username ? (
+        <Text style={styles.formError}>{userErrors.username}</Text>
+      ) : null}
       <FormInput
         name="username"
         placeholder="Username"
@@ -53,6 +56,9 @@ export const Login = ({ navigation }: any) => {
         defaultValue={userValues.username}
         onChangeText={handleChange}
       />
+      {userErrors?.password ? (
+        <Text style={styles.formError}>{userErrors.password}</Text>
+      ) : null}
       <FormInput
         name="password"
         placeholder="Password"
@@ -69,7 +75,13 @@ export const Login = ({ navigation }: any) => {
         onPress={handleLogin}
         disabled={loading ? true : false}
       >
-        <Text style={styles.buttonText}>Sign In</Text>
+        <Text style={styles.buttonText}>
+          {loading ? (
+            <ActivityIndicator size="small" color={'#000'} />
+          ) : (
+            'Sign In'
+          )}
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.center}>
@@ -92,6 +104,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 30,
     paddingRight: 30,
+  },
+  formError: {
+    color: '#cf2343',
+    fontSize: 12,
+    padding: 8,
   },
   formInput: {
     height: 55,

@@ -13,6 +13,10 @@ interface UserValues {
   password: string;
 }
 
+interface ErrorResponse {
+  data: { msg: { fieldName: string; msg: string } };
+}
+
 const initUserValues = {
   username: '',
   password: '',
@@ -54,6 +58,7 @@ const useLogin = () => {
 
   const handleLogin = async () => {
     try {
+      if (!userValues.username || !userValues.password) return '';
       Keyboard.dismiss();
       setUserErrors(initUserValues);
       setFocusValues(initFocusValues);
@@ -61,11 +66,13 @@ const useLogin = () => {
       setUserValues(initUserValues);
       dispatch(setAuth(result));
       console.log('Sign in success!');
-    } catch (error: any) {
-      if (error) {
+    } catch (error) {
+      const fieldName = (error as ErrorResponse)?.data?.msg?.fieldName;
+      const message = (error as ErrorResponse)?.data?.msg?.msg;
+      if (fieldName && message) {
         setUserErrors((prev) => ({
           ...prev,
-          [error?.data?.msg?.fieldName ?? 'username']: error?.data?.msg?.msg,
+          [fieldName]: message,
         }));
       }
     }

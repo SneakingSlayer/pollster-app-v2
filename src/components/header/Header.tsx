@@ -17,6 +17,8 @@ import { globalStyles } from '../globalStyles/GlobalStyles';
 import { useAppDispatch } from '../../redux/hooks';
 import { logout } from '../../redux/slices/authSlice';
 
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 export const Header = () => {
   const dispatch = useAppDispatch();
 
@@ -34,16 +36,18 @@ export const Header = () => {
           />
         </View>
         <TouchableOpacity onPress={handleLogout}>
-          <Text>Logout</Text>
+          <Text>
+            <Icon name="share" size={20} color="#008CFF" />{' '}
+          </Text>
         </TouchableOpacity>
-        <View style={[styles.profilePictureWrapper]}>
+        {/** <View style={[styles.profilePictureWrapper]}>
           <Text style={[globalStyles.fontLight, globalStyles.fontBold]}>
             {
               'user.length > 0 ? user[0].firstname.charAt(0).toUpperCase() : null'
             }
           </Text>
         </View>
-        {/** <TouchableOpacity
+       <TouchableOpacity
           style={styles.search}
           onPress={() => navigation.navigate("search")}
         >

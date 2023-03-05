@@ -1,5 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 
 import { AdminPoll } from '../../components/adminPoll/AdminPoll';
 
@@ -8,7 +15,7 @@ import { PollProps } from '../../types/globalTypes';
 
 import { useLazyGetPollsQuery } from '../../redux/services/pollServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { loadPolls } from '../../redux/slices/pollSlice';
+import { loadPolls, clearPoll } from '../../redux/slices/pollSlice';
 
 export const Polls = ({ navigation }: HomeTabScreenProps<'Poll'>) => {
   const [page, setPage] = useState(1);
@@ -38,6 +45,11 @@ export const Polls = ({ navigation }: HomeTabScreenProps<'Poll'>) => {
       <AdminPoll props={item} />
     </View>
   );
+  const handleRefresh = () => {
+    dispatch(clearPoll());
+    setPage(1);
+    handlePaginatedPoll(1);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -49,8 +61,10 @@ export const Polls = ({ navigation }: HomeTabScreenProps<'Poll'>) => {
         onEndReached={() =>
           setPage((prev) => (prev >= totalPages ? prev : prev + 1))
         }
+        refreshControl={
+          <RefreshControl refreshing={isFetching} onRefresh={handleRefresh} />
+        }
       />
-      {isFetching && <Text>Loading...</Text>}
     </SafeAreaView>
   );
 };
