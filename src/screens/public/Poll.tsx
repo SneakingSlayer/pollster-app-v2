@@ -16,136 +16,77 @@ import { useNavigation } from '@react-navigation/native';
 import { RadioButton, ProgressBar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { formatDate } from '../../utils/dateformat';
-export const Poll = ({ route }) => {
-  const [poll, setPoll] = useState([]);
-  const [votes, setVotes] = useState([]);
-  const props = route.params;
-  const [checked, setChecked] = useState('');
-  const [choiceDescription, setChoiceDescription] = useState('');
-  const [pollTitle, setPollTitle] = useState('');
-  const [posterName, setPosterName] = useState('');
+import {
+  HomeTabParamList,
+  HomeTabScreenProps,
+  RootNavigationProp,
+} from '../../routes/types';
+import {
+  pollApi,
+  useLazyGetPollQuery,
+} from '../../redux/services/pollServices';
+import {
+  useLazyGetVotesQuery,
+  useAddVoteMutation,
+} from '../../redux/services/voteServices';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { updatePoll } from '../../redux/slices/pollSlice';
+
+export const Poll = ({ route }: HomeTabScreenProps<'Poll'>) => {
+  const { _id } = route.params;
+
+  console.log(_id);
+
+  const [selected, setSelected] = useState({
+    user_id: '',
+    poll_id: '',
+    choice_description: '',
+    choice: null,
+    poster_name: '',
+    title: '',
+  });
 
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const goBack = () => navigation.goBack();
-  /* const fetchPoll = () => {
-    fetch(BASE_URL.polls + `/${props.pollID}`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setPoll(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
-  const fetchVotes = () => {
-    fetch(BASE_URL.votes + `/${data.id}`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setVotes(data);
-        // console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth);
+
+  const [getPollQuery, { data: poll, isFetching: isFetchingPoll }] =
+    useLazyGetPollQuery();
+
+  const [getVotes, { data: votes, isFetching: isFetchingVotes }] =
+    useLazyGetVotesQuery();
+
+  const [addVote, { data: voteResult, isLoading: isAddingVote, error }] =
+    useAddVoteMutation();
 
   useEffect(() => {
-    fetchPoll();
-    getCurrentUser();
-    fetchVotes();
-  }, [loading]);
+    getPollQuery({ id: _id });
+    getVotes({ id: _id });
+  }, [_id]);
 
-  const handleAddVote = () => {
-    fetchStart();
-    setLoading(true);
-    if (checked === '' || data.id === null || props.pollID === '') {
-      setLoading(false);
-      return;
+  const onSubmit = async () => {
+    try {
+      const result = await addVote({ payload: selected });
+      dispatch(pollApi.util.invalidateTags(['GET_POLL']));
+      dispatch(updatePoll((result as any)?.data));
+    } catch (error) {
+      dispatch(pollApi.util.invalidateTags(['GET_POLL']));
     }
-    const body = {
-      user_id: data.id,
-      poll_id: props.pollID,
-      choice_description: choiceDescription,
-      choice: checked,
-      poster_name: posterName,
-      title: pollTitle,
-    };
-    console.log(body);
-
-    fetch(BASE_URL.votes, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setLoading(false);
-        fetchFinish();
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-        fetchFinish();
-      });
   };
 
-  const updateVoteCount = () => {
-    if (checked === '' || data.id === null || props.pollID === '') return;
-    const body = {
-      idx: checked,
-    };
+  const hasVoted = votes?.map((vote: any) => vote.user_id)?.includes(user?.id);
 
-    fetch(BASE_URL.polls + `/${props.pollID}`, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => res.json())
-      .then((data) => {})
-      .catch((err) => {});
+  const isSelectedOption = (index: number): boolean => {
+    if (isNaN(selected.choice)) return false;
+    if (parseInt(selected.choice) === index) return true;
   };
 
-  const votePollIDs = () => {
-    let ids = [];
-    for (let i = 0; i < votes.length; i++) {
-      ids.push(votes[i].poll_id);
-    }
-    return ids;
-  };
+  console.log(poll?.choices);
 
-  useEffect(() => {
-    const logout = navigation.addListener('focus', () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);
-*/
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.upper}>
@@ -163,19 +104,16 @@ export const Poll = ({ route }) => {
               globalStyles.fontBold,
             ]}
           >
-            {props.title}
+            {poll?.title}
           </Text>
 
           <View style={{ width: '100%', flexGrow: 1, flex: 1 }}>
-            <Text style={[styles.fontLight]}> {props.description}</Text>
+            <Text style={[styles.fontLight]}> {poll?.description}</Text>
           </View>
         </View>
         <View style={styles.userWrapper}>
           <View style={styles.user}>
-            {/**<Image
-              style={styles.profilePicture}
-              source={require('../../src/assets/images/user.jpg')}
-            /> */}
+            {/**<Image style={styles.profilePicture} source={require('')} /> */}
             <View>
               <Text
                 style={[
@@ -184,7 +122,7 @@ export const Poll = ({ route }) => {
                   styles.fontLight,
                 ]}
               >
-                {props.firstname + ' ' + props.lastname}
+                {poll?.firstname + ' ' + poll?.lastname}
               </Text>
               <Text
                 style={[
@@ -204,16 +142,17 @@ export const Poll = ({ route }) => {
               styles.fontLight,
             ]}
           >
-            {formatDate(props.date)}
+            {formatDate(poll?.createdAt)}
           </Text>
         </View>
-        {poll.length > 0 ? (
+        {/**poll.length > 0 ? (
           <ImageBackground
-            source={{ uri: poll[0].img }}
+            source={{ uri: img }}
             style={styles.backgroundImage}
           />
-        ) : null}
+        ) : null*/}
       </View>
+      {/** */}
       <View style={styles.lower}>
         <View style={[styles.lowerContentHeader]}>
           <Text
@@ -226,14 +165,8 @@ export const Poll = ({ route }) => {
             Poll Results
           </Text>
 
-          <View
-            style={
-              votePollIDs().includes(props.pollID)
-                ? styles.pill
-                : styles.disabledPill
-            }
-          >
-            {votePollIDs().includes(props.pollID) ? (
+          <View style={hasVoted ? styles.pill : styles.disabledPill}>
+            {hasVoted ? (
               <Text
                 style={[
                   globalStyles.primaryTxt,
@@ -258,87 +191,83 @@ export const Poll = ({ route }) => {
         </View>
 
         <ScrollView style={{ maxHeight: '70%' }}>
-          {poll.length > 0
-            ? poll[0].choices.map((choice, idx) => (
-                <View style={{ marginBottom: 10 }} key={idx}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginRight: 5,
-                    }}
+          {poll?.choices?.map((choice: any, idx: number) => (
+            <View style={{ marginBottom: 10 }} key={idx}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: 5,
+                }}
+              >
+                <RadioButton
+                  value="first"
+                  status={isSelectedOption(idx) ? 'checked' : 'unchecked'}
+                  onPress={() =>
+                    setSelected((prev: any) => ({
+                      ...prev,
+                      user_id: user?.id,
+                      poll_id: _id,
+                      choice_description: choice.choice,
+                      poster_name: poll?.firstname + ' ' + poll?.lastname,
+                      choice: idx,
+                      title: poll?.title,
+                    }))
+                  }
+                  color="#008CFF"
+                />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flex: 1,
+                  }}
+                >
+                  <Text
+                    style={[
+                      isSelectedOption(idx)
+                        ? globalStyles.primaryTxt
+                        : globalStyles.fontMuted,
+                      globalStyles.fontBold,
+                    ]}
                   >
-                    <RadioButton
-                      value="first"
-                      status={checked === choice.idx ? 'checked' : 'unchecked'}
-                      onPress={() => {
-                        setChecked(choice.idx);
-                        setChoiceDescription(choice.choice);
-                        setPollTitle(poll[0].title);
-                        setPosterName(
-                          poll[0].firstname + ' ' + poll[0].lastname
-                        );
-                      }}
-                      color="#008CFF"
-                    />
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flex: 1,
-                      }}
-                    >
-                      <Text
-                        style={[
-                          checked === choice.idx
-                            ? globalStyles.primaryTxt
-                            : globalStyles.fontMuted,
-                          globalStyles.fontBold,
-                        ]}
-                      >
-                        {choice.choice}
-                      </Text>
-                      <Text
-                        style={[
-                          checked === choice.idx
-                            ? globalStyles.primaryTxt
-                            : globalStyles.fontMuted,
-                          globalStyles.fontBold,
-                        ]}
-                      >
-                        {choice.votes}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <ProgressBar
-                    progress={
-                      choice.votes === 0 || poll[0].totalVotes === 0
-                        ? 0
-                        : choice.votes / poll[0].totalVotes
-                    }
-                    color={checked === choice.idx ? '#008CFF' : '#ddd'}
-                    style={{ height: 20, borderRadius: 7 }}
-                  />
+                    {choice.choice}
+                  </Text>
+                  <Text
+                    style={[
+                      isSelectedOption(idx)
+                        ? globalStyles.primaryTxt
+                        : globalStyles.fontMuted,
+                      globalStyles.fontBold,
+                    ]}
+                  >
+                    {choice.votes}
+                  </Text>
                 </View>
-              ))
-            : null}
+              </View>
+              <ProgressBar
+                progress={
+                  choice.vote === 0 || poll?.totalVotes === 0
+                    ? 0
+                    : choice.votes / poll?.totalVotes
+                }
+                //
+                color={isSelectedOption(idx) ? '#008CFF' : '#ddd'}
+                style={{ height: 20, borderRadius: 7 }}
+              />
+            </View>
+          ))}
         </ScrollView>
 
-        {votePollIDs().includes(props.pollID) ? (
+        {hasVoted ? (
           <TouchableOpacity
             style={styles.disabledButton}
-            onPress={() => {
-              handleAddVote();
-              updateVoteCount();
-            }}
+            onPress={() => {}}
             disabled={true}
           >
             <Text
               style={[
-                styles.buttonText,
-
                 globalStyles.fontBold,
                 { textAlign: 'center', color: '#fff' },
               ]}
@@ -349,16 +278,11 @@ export const Poll = ({ route }) => {
         ) : (
           <TouchableOpacity
             style={loading ? styles.disabledButton : styles.formButton}
-            onPress={() => {
-              handleAddVote();
-              updateVoteCount();
-            }}
+            onPress={onSubmit}
             disabled={loading ? true : false}
           >
             <Text
               style={[
-                styles.buttonText,
-
                 globalStyles.fontBold,
                 { textAlign: 'center', color: '#fff' },
               ]}

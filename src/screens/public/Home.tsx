@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   ScrollView,
   FlatList,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { Poll } from '../../components/poll/Poll';
 import { Header } from '../../components/header/Header';
@@ -16,93 +18,63 @@ import { BASE_URL } from '../../utils/baseurl';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { useLazyGetPollsQuery } from '../../redux/services/pollServices';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { clearPoll, loadPolls } from '../../redux/slices/pollSlice';
+import { PollProps } from '../../types/globalTypes';
+
 export const Home = () => {
-  const Tab = createBottomTabNavigator();
-  const [polls, setPolls] = useState([]);
-  const [votes, setVotes] = useState([]);
+  const [page, setPage] = useState(1);
 
-  /* const fetchPolls = () => {
-    fetch(BASE_URL.polls, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setPolls(data.polls);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const [getPolls, { isFetching, data }] = useLazyGetPollsQuery();
+  const totalPages = data?.totalPages;
 
-  const fetchVotes = () => {
-    fetch(BASE_URL.votes + `/${data.id}`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setVotes(data);
-        //  console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const dispatch = useAppDispatch();
+  const { polls } = useAppSelector((state) => state.polls);
+
+  const handlePaginatedPoll = async (page: number) => {
+    try {
+      const result = await getPolls({ page: page });
+      dispatch(loadPolls(result?.data?.polls));
+    } catch (error) {
+      console.log(error);
+      dispatch(loadPolls([]));
+    }
   };
 
   useEffect(() => {
-    fetchPolls();
-    fetchVotes();
-    getCurrentUser();
-  }, [loading]);
+    handlePaginatedPoll(page);
+  }, [page]);
 
-  const votePollIDs = () => {
-    let ids = [];
-    for (let i = 0; i < votes.length; i++) {
-      ids.push(votes[i].poll_id);
-    }
-    return ids;
+  console.log(polls);
+
+  const handleRefresh = () => {
+    dispatch(clearPoll());
+    setPage(1);
+    handlePaginatedPoll(1);
   };
 
-  // console.log(polls);*/
-
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item, index }: { item: PollProps; index: number }) => (
     <View>
-      <Poll
-        title={item.title}
-        description={item.description}
-        firstname={item.firstname}
-        lastname={item.lastname}
-        votes={item.totalVotes}
-        id={item._id}
-        choices={item.choices}
-        //voted={votePollIDs().includes(item._id) ? true : false}
-        date={item.date_created}
-        img={item.img}
-      />
+      <Poll props={item} />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/** <Header />*/}
-      <Category />
-      {polls.length > 0 ? (
-        <FlatList
-          style={styles.pollsWrapper}
-          data={polls}
-          renderItem={renderItem}
-          keyExtractor={(poll) => poll._id}
-        />
-      ) : null}
+      {/**<Category /> */}
+      <FlatList
+        style={styles.pollsWrapper}
+        data={polls}
+        renderItem={renderItem}
+        keyExtractor={(_: any, index: number) => `key${index}`}
+        onEndReached={() =>
+          setPage((prev) => (prev >= totalPages ? prev : prev + 1))
+        }
+        refreshControl={
+          <RefreshControl refreshing={isFetching} onRefresh={handleRefresh} />
+        }
+      />
     </SafeAreaView>
   );
 };

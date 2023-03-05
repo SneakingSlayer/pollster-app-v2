@@ -11,6 +11,7 @@ const FormInput = (props: any) => {
     name,
   } = props;
 
+  const privateText = ['password'];
   return (
     <TextInput
       placeholder={placeholder}
@@ -20,6 +21,7 @@ const FormInput = (props: any) => {
       defaultValue={defaultValue}
       onChangeText={(e) => onChangeText(e, name)}
       returnKeyType={'next'}
+      secureTextEntry={privateText.includes(name)}
     />
   );
 };

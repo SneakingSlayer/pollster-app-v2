@@ -26,6 +26,7 @@ const navigationRef = createNavigationContainerRef();
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
 export const Routes = () => {
   const dispatch = useAppDispatch();
   const data = useAppSelector((state) => state.auth);

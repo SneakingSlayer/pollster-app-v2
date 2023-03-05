@@ -1,52 +1,56 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
-import { Poll } from '../../components/poll/Poll';
-import { Header } from '../../components/header/Header';
-import { Category } from '../../components/category/Category';
-import { globalStyles } from '../../components/globalStyles/GlobalStyles';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { StyleSheet, Text, View, SafeAreaView, FlatList } from 'react-native';
 
-import { BASE_URL } from '../../utils/baseurl';
 import { AdminPoll } from '../../components/adminPoll/AdminPoll';
-export const Polls = ({ navigation }) => {
-  const [polls, setPolls] = useState([]);
 
-  const renderItem = ({ item }) => (
+import { HomeTabScreenProps } from '../../routes/types';
+import { PollProps } from '../../types/globalTypes';
+
+import { useLazyGetPollsQuery } from '../../redux/services/pollServices';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { loadPolls } from '../../redux/slices/pollSlice';
+
+export const Polls = ({ navigation }: HomeTabScreenProps<'Poll'>) => {
+  const [page, setPage] = useState(1);
+
+  const [getPolls, { isFetching, data }] = useLazyGetPollsQuery();
+  const totalPages = data?.totalPages;
+
+  const dispatch = useAppDispatch();
+  const { polls } = useAppSelector((state) => state.polls);
+
+  const handlePaginatedPoll = async (page: number) => {
+    try {
+      const result = await getPolls({ page: page });
+      dispatch(loadPolls(result?.data?.polls));
+    } catch (error) {
+      console.log(error);
+      dispatch(loadPolls([]));
+    }
+  };
+
+  useEffect(() => {
+    handlePaginatedPoll(page);
+  }, [page]);
+
+  const renderItem = ({ item }: { item: PollProps }) => (
     <View>
-      <AdminPoll
-        title={item.title}
-        description={item.description}
-        firstname={item.firstname}
-        lastname={item.lastname}
-        votes={item.totalVotes}
-        id={item._id}
-        choices={item.choices}
-        date={item.date_created}
-        img={item.img}
-      />
+      <AdminPoll props={item} />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {polls.length > 0 ? (
-        <FlatList
-          style={styles.pollsWrapper}
-          data={polls}
-          renderItem={renderItem}
-          keyExtractor={(poll) => poll._id}
-        />
-      ) : null}
+      <FlatList
+        style={styles.pollsWrapper}
+        data={polls}
+        renderItem={renderItem}
+        keyExtractor={(_: any, index: number) => `key${index}`}
+        onEndReached={() =>
+          setPage((prev) => (prev >= totalPages ? prev : prev + 1))
+        }
+      />
+      {isFetching && <Text>Loading...</Text>}
     </SafeAreaView>
   );
 };

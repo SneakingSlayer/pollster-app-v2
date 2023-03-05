@@ -16,30 +16,28 @@ import { globalStyles } from '../globalStyles/GlobalStyles';
 import { BASE_URL } from '../../utils/baseurl';
 import { useNavigation } from '@react-navigation/native';
 import { formatDate } from '../../utils/dateformat';
-export const AdminPoll = (props) => {
-  const navigation = useNavigation();
+
+import { type PollProps } from '../../types/globalTypes';
+import { RootNavigationProp } from '../../routes/types';
+import { useDeletePollMutation } from '../../redux/services/pollServices';
+import { useAppDispatch } from '../../redux/hooks';
+import { deletePoll as deletePollInState } from '../../redux/slices/pollSlice';
+
+export const AdminPoll = ({ props }: { props: PollProps }) => {
+  const navigation = useNavigation<any>();
   const [confirm, setConfirm] = useState(false);
 
-  /** const handleDelete = () => {
-    fetchStart();
-    fetch(BASE_URL.polls + `/${props.id}`, {
-      method: 'DELETE',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        fetchFinish();
-      })
-      .catch((err) => {
-        fetchFinish();
-        console.log(err);
-      });
-  }; */
+  const [deletePoll] = useDeletePollMutation();
+
+  const dispatch = useAppDispatch();
+
+  const onDelete = async () => {
+    try {
+      await deletePoll({ id: props._id });
+      dispatch(deletePollInState(props._id));
+    } catch (error) {}
+  };
+
   return (
     <Provider>
       <View style={styles.container}>
@@ -59,7 +57,7 @@ export const AdminPoll = (props) => {
             </View>
           </View>
           <Text style={[styles.fontXs, styles.fontMuted]}>
-            {formatDate(props.date)}
+            {formatDate(props.createdAt)}
           </Text>
         </View>
         <View>
@@ -69,18 +67,15 @@ export const AdminPoll = (props) => {
           </Text>
         </View>
         <View style={styles.imgWrapper}>
-          {props.img !== null ? (
+          {/*!props.img ? (
             <Image style={styles.pollImg} source={{ uri: props.img }} />
-          ) : null}
+          ) : null*/}
         </View>
         <View style={styles.ctaWrapper}>
           <View style={styles.leftButtons}>
             {confirm ? (
               <>
-                <TouchableOpacity
-                  style={styles.viewPollBtn}
-                  onPress={handleDelete}
-                >
+                <TouchableOpacity onPress={onDelete}>
                   <Text style={[globalStyles.primaryTxt, styles.fontBold]}>
                     <Icon name="check" size={15} color="#008CFF" /> Delete this
                     poll?
@@ -100,16 +95,12 @@ export const AdminPoll = (props) => {
                 style={[
                   {
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
                     alignItems: 'center',
                     width: '100%',
                   },
                 ]}
               >
-                <TouchableOpacity
-                  style={styles.viewPollBtn}
-                  onPress={() => setConfirm(true)}
-                >
+                <TouchableOpacity onPress={() => setConfirm(true)}>
                   <Text style={[{ color: '#fa2d37' }, styles.fontBold]}>
                     <Icon name="times" size={15} color="#fa2d37" /> Delete Poll
                   </Text>
@@ -117,14 +108,7 @@ export const AdminPoll = (props) => {
                 <TouchableOpacity
                   style={styles.viewPollBtn}
                   onPress={() => {
-                    navigation.navigate('poll', {
-                      pollID: props.id,
-                      title: props.title,
-                      description: props.description,
-                      firstname: props.firstname,
-                      lastname: props.lastname,
-                      date: props.date,
-                    });
+                    navigation.navigate('poll', { ...props });
                   }}
                 >
                   <Text style={[styles.primaryTxt, styles.fontBold]}>

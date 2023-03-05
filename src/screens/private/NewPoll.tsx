@@ -20,13 +20,27 @@ import { Modal, Portal, Provider } from 'react-native-paper';
 import { BASE_URL } from '../../utils/baseurl';
 import * as ImagePicker from 'expo-image-picker';
 import { ActivityIndicator } from 'react-native-paper';
-export const NewPoll = ({ navigation }) => {
+import { HomeTabScreenProps } from '../../routes/types';
+import { useAddPollMutation } from '../../redux/services/pollServices';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { addPoll as addPolltoState } from '../../redux/slices/pollSlice';
+
+export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
   const [visible, setVisible] = useState(false);
   const [choices, setChoices] = useState([]);
   const [choice, setChoice] = useState('');
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  const [newPoll, setNewPoll] = useState({
+    user_id: '',
+    title: '',
+    description: '',
+    img: '',
+    votes: 0,
+    choices: [] as any,
+  });
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -39,94 +53,23 @@ export const NewPoll = ({ navigation }) => {
     borderWidth: 0,
   };
 
-  /*const handleAddChoice = () => {
-    if (choice === '') return;
-    const newArr = {
-      idx: choices.length + 1,
-      choice: choice,
-      votes: 0,
-    };
-    setChoices([...choices, newArr]);
-    setChoice('');
-    hideModal();
-  };
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth);
+  const [addPoll] = useAddPollMutation();
 
-  const handleDeleteChoice = (key) => {
-    const filtered = choices.filter((choice) => choice.idx !== key);
-    console.log(filtered);
-    setChoices(filtered);
-  };
+  useEffect(() => {}, []);
 
-  const handleSubmitPoll = () => {
-    fetchStart();
-    setLoading(true);
-
-    if (title === '' || description === '' || choices.length === 0) {
-      fetchFinish();
-      setLoading(false);
-      return;
-    }
-
-    const base64Image = `data:image/jpg;base64,${image.base64}`;
-    console.log(base64Image);
-    const body = {
-      user_id: data.id,
-      title: title,
-      description: description,
-      img: base64Image,
-      votes: 0,
-      choices: choices,
-    };
-
-    fetch(BASE_URL.polls, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        fetchFinish();
-        setChoices([]);
-        setTitle('');
-        setDescription('');
-        setLoading(false);
-        console.log(data);
-      })
-      .catch((err) => {
-        fetchFinish();
-        setChoices([]);
-        setTitle('');
-        setDescription('');
-        console.log(err);
-        setLoading(false);
+  const onSubmit = async () => {
+    try {
+      const result = await addPoll({
+        payload: { ...newPoll, user_id: user?.id },
       });
+      console.log(result?.data);
+      dispatch(addPolltoState(result?.data));
+    } catch (error) {}
   };
+  console.log(newPoll.choices);
 
-  const [image, setImage] = useState(null);
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      base64: true,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImage(result);
-    }
-  };
-  useEffect(() => {
-    const logout = navigation.addListener('focus', () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);*/
   return (
     <Provider>
       <SafeAreaView style={styles.container}>
@@ -153,7 +96,18 @@ export const NewPoll = ({ navigation }) => {
             />
             <TouchableOpacity
               style={styles.formButton}
-              onPress={handleAddChoice}
+              onPress={() => {
+                setNewPoll((prev: any) => ({
+                  ...prev,
+                  choices: [
+                    ...prev.choices,
+                    {
+                      choice: choice,
+                      votes: 0,
+                    },
+                  ],
+                }));
+              }}
             >
               <Text style={styles.buttonText}>Add</Text>
             </TouchableOpacity>
@@ -164,7 +118,7 @@ export const NewPoll = ({ navigation }) => {
             style={styles.formInput}
             placeholder="Title"
             defaultValue={title}
-            onChangeText={(e) => setTitle(e)}
+            onChangeText={(e) => setNewPoll((prev) => ({ ...prev, title: e }))}
           />
           <TextInput
             style={styles.formInputMulti}
@@ -172,9 +126,11 @@ export const NewPoll = ({ navigation }) => {
             multiline
             numberOfLines={4}
             defaultValue={description}
-            onChangeText={(e) => setDescription(e)}
+            onChangeText={(e) =>
+              setNewPoll((prev) => ({ ...prev, description: e }))
+            }
           />
-          <View style={[styles.uploadBox]}>
+          {/** <View style={[styles.uploadBox]}>
             <TouchableOpacity onPress={pickImage}>
               {image ? (
                 <Text
@@ -219,7 +175,7 @@ export const NewPoll = ({ navigation }) => {
                 </>
               )}
             </TouchableOpacity>
-          </View>
+          </View>*/}
           <View style={{ marginBottom: 10 }}>
             <View
               style={{
@@ -246,18 +202,24 @@ export const NewPoll = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: 5, marginBottom: 5 }}>
-              {choices.length > 0 ? (
-                choices.map((choice, idx) => (
-                  <View style={styles.choice} key={idx}>
-                    <Text>{choice.choice}</Text>
-                    <TouchableOpacity
-                      onPress={() => handleDeleteChoice(choice.idx)}
-                    >
-                      <Icon name="trash-alt" size={15} color="#eb3446" />
-                    </TouchableOpacity>
-                  </View>
-                ))
-              ) : (
+              {newPoll.choices?.map((choice, idx) => (
+                <View style={styles.choice} key={idx}>
+                  <Text>{choice.choice}</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setNewPoll((prev) => ({
+                        ...prev,
+                        choices: prev.choices.filter(
+                          (choice, index) => index !== idx
+                        ),
+                      }));
+                    }}
+                  >
+                    <Icon name="trash-alt" size={15} color="#eb3446" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+              {!newPoll.choices?.length ? (
                 <Text
                   style={[
                     globalStyles.fontMuted,
@@ -267,7 +229,7 @@ export const NewPoll = ({ navigation }) => {
                 >
                   No choices added yet.
                 </Text>
-              )}
+              ) : null}
             </View>
           </View>
 
@@ -290,10 +252,7 @@ export const NewPoll = ({ navigation }) => {
               </Text>
             </View>
           ) : (
-            <TouchableOpacity
-              style={styles.formButton}
-              onPress={handleSubmitPoll}
-            >
+            <TouchableOpacity style={styles.formButton} onPress={onSubmit}>
               <Text style={styles.buttonText}>Post</Text>
             </TouchableOpacity>
           )}
