@@ -7,11 +7,11 @@ import jwt_decode from 'jwt-decode';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //Pages
-import { Login } from '../screens/login/Login';
+import { Login } from '../screens/public/login/Login';
 import { Home } from '../screens/public/Home';
 import { Poll } from '../screens/public/Poll';
 import { Profile } from '../screens/public/Profile';
-import { Register } from '../screens/public/Register';
+import { Register } from '../screens/public/register/Register';
 import { Search } from '../screens/public/Search';
 
 import { UserTabRoutes } from './UserTabRoutes';
@@ -21,6 +21,8 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { getAuth } from '../redux/slices/authSlice';
 
 import { createNavigationContainerRef } from '@react-navigation/native';
+
+import { CardStyleInterpolators } from '@react-navigation/stack';
 
 const navigationRef = createNavigationContainerRef();
 
@@ -39,7 +41,11 @@ export const Routes = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator>
+      <Stack.Navigator
+      /* screenOptions={{
+          cardStyleInterpolator: CardStyleInterpolators.,
+        }}*/
+      >
         {!data?.token ? (
           <>
             <Stack.Screen

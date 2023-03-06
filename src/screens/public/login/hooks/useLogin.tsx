@@ -3,9 +3,9 @@ import React, { useEffect } from 'react';
 import { Keyboard } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSignInMutation } from '../../../redux/services/authServices';
-import { useAppDispatch } from '../../../redux/hooks';
-import { setAuth } from '../../../redux/slices/authSlice';
+import { useSignInMutation } from '../../../../redux/services/authServices';
+import { useAppDispatch } from '../../../../redux/hooks';
+import { setAuth } from '../../../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 
 interface UserValues {
@@ -16,6 +16,11 @@ interface UserValues {
 interface ErrorResponse {
   data: { msg: { fieldName: string; msg: string } };
 }
+
+const userValuesNames = {
+  username: 'username',
+  password: 'password',
+};
 
 const initUserValues = {
   username: '',
@@ -58,7 +63,7 @@ const useLogin = () => {
 
   const handleLogin = async () => {
     try {
-      if (!userValues.username || !userValues.password) return '';
+      if (hasFieldsError()) return;
       Keyboard.dismiss();
       setUserErrors(initUserValues);
       setFocusValues(initFocusValues);
@@ -78,6 +83,24 @@ const useLogin = () => {
     }
   };
 
+  const hasFieldsError = (): boolean => {
+    let hasError = false;
+    let errs = { ...userErrors };
+    Object.entries(userValues).forEach((field) => {
+      const fieldError = validate({
+        name: field[0],
+        value: field[1],
+      });
+      if (fieldError) hasError = true;
+      errs = {
+        ...errs,
+        [field[0]]: fieldError,
+      };
+    });
+    setUserErrors(errs);
+    return hasError;
+  };
+
   return {
     userValues,
     handleChange,
@@ -88,6 +111,17 @@ const useLogin = () => {
     focusValues,
     handleBlur,
   };
+};
+
+const validate = ({ name, value }: { name: string; value: string }): string => {
+  switch (name) {
+    case userValuesNames.username:
+      if (!value) return 'Email or username is required.';
+    case userValuesNames.password:
+      if (!value) return 'Password is required.';
+    default:
+      return '';
+  }
 };
 
 export default useLogin;

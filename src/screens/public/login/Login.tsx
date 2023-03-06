@@ -10,12 +10,11 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import { BASE_URL } from '../../utils/baseurl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { globalStyles } from '../../components/globalStyles/GlobalStyles';
+import { globalStyles } from '../../../components/globalStyles/GlobalStyles';
 
-import FormInput from '../../components/inputs/FormInput';
+import FormInput from '../../../components/inputs/FormInput';
 
 import useLogin from './hooks/useLogin';
 
@@ -41,25 +40,21 @@ export const Login = ({ navigation }: any) => {
       <View style={styles.logoWrapper}>
         <Image
           style={styles.logo}
-          source={require('../../assets/logos/login-logo.png')}
+          source={require('../../../assets/logos/login-logo.png')}
         />
       </View>
-      {userErrors?.username ? (
-        <Text style={styles.formError}>{userErrors.username}</Text>
-      ) : null}
       <FormInput
+        errors={userErrors.username}
         name="username"
-        placeholder="Username"
+        placeholder="Email or username"
         style={inputStyle(focusValues.username, userErrors.username)}
         onFocus={() => handleFocus('username')}
         onBlur={() => handleBlur('username')}
         defaultValue={userValues.username}
         onChangeText={handleChange}
       />
-      {userErrors?.password ? (
-        <Text style={styles.formError}>{userErrors.password}</Text>
-      ) : null}
       <FormInput
+        errors={userErrors.password}
         name="password"
         placeholder="Password"
         secureTextEntry={true}
@@ -92,6 +87,21 @@ export const Login = ({ navigation }: any) => {
         >
           Sign up here
         </Text>
+      </Text>
+      <Text
+        style={{
+          textAlign: 'center',
+          fontSize: 10,
+          opacity: 0.4,
+          position: 'absolute',
+          bottom: 0,
+          padding: 12,
+          left: 0,
+          right: 0,
+          margin: 'auto',
+        }}
+      >
+        © 2023 Marama Networks. All Rights Reserved.
       </Text>
     </SafeAreaView>
   );
