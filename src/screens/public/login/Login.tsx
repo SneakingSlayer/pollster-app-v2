@@ -18,6 +18,8 @@ import FormInput from '../../../components/inputs/FormInput';
 
 import useLogin from './hooks/useLogin';
 
+import Footer from '../../../components/footer/Footer';
+
 export const Login = ({ navigation }: any) => {
   const {
     userValues,
@@ -37,72 +39,60 @@ export const Login = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.logoWrapper}>
-        <Image
-          style={styles.logo}
-          source={require('../../../assets/logos/login-logo.png')}
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <View style={styles.logoWrapper}>
+          <Image
+            style={styles.logo}
+            source={require('../../../assets/logos/login-logo.png')}
+          />
+        </View>
+        <FormInput
+          errors={userErrors.username}
+          name="username"
+          placeholder="Email or username"
+          style={inputStyle(focusValues.username, userErrors.username)}
+          onFocus={() => handleFocus('username')}
+          onBlur={() => handleBlur('username')}
+          defaultValue={userValues.username}
+          onChangeText={handleChange}
         />
-      </View>
-      <FormInput
-        errors={userErrors.username}
-        name="username"
-        placeholder="Email or username"
-        style={inputStyle(focusValues.username, userErrors.username)}
-        onFocus={() => handleFocus('username')}
-        onBlur={() => handleBlur('username')}
-        defaultValue={userValues.username}
-        onChangeText={handleChange}
-      />
-      <FormInput
-        errors={userErrors.password}
-        name="password"
-        placeholder="Password"
-        secureTextEntry={true}
-        style={inputStyle(focusValues.password, userErrors.password)}
-        onFocus={() => handleFocus('password')}
-        onBlur={() => handleBlur('password')}
-        defaultValue={userValues.password}
-        onChangeText={handleChange}
-      />
+        <FormInput
+          errors={userErrors.password}
+          name="password"
+          placeholder="Password"
+          secureTextEntry={true}
+          style={inputStyle(focusValues.password, userErrors.password)}
+          onFocus={() => handleFocus('password')}
+          onBlur={() => handleBlur('password')}
+          defaultValue={userValues.password}
+          onChangeText={handleChange}
+        />
 
-      <TouchableOpacity
-        style={loading ? styles.disabledButton : styles.formButton}
-        onPress={handleLogin}
-        disabled={loading ? true : false}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? (
-            <ActivityIndicator size="small" color={'#000'} />
-          ) : (
-            'Sign In'
-          )}
-        </Text>
-      </TouchableOpacity>
-
-      <Text style={styles.center}>
-        Don't have an account?{' '}
-        <Text
-          style={styles.textButton}
-          onPress={() => navigation.navigate('register')}
+        <TouchableOpacity
+          style={loading ? styles.disabledButton : styles.formButton}
+          onPress={handleLogin}
+          disabled={loading ? true : false}
         >
-          Sign up here
+          <Text style={styles.buttonText}>
+            {loading ? (
+              <ActivityIndicator size="small" color={'#000'} />
+            ) : (
+              'Sign In'
+            )}
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={styles.center}>
+          Don't have an account?{' '}
+          <Text
+            style={styles.textButton}
+            onPress={() => navigation.navigate('register')}
+          >
+            Sign up here
+          </Text>
         </Text>
-      </Text>
-      <Text
-        style={{
-          textAlign: 'center',
-          fontSize: 10,
-          opacity: 0.4,
-          position: 'absolute',
-          bottom: 0,
-          padding: 12,
-          left: 0,
-          right: 0,
-          margin: 'auto',
-        }}
-      >
-        © 2023 Marama Networks. All Rights Reserved.
-      </Text>
+      </View>
+      <Footer />
     </SafeAreaView>
   );
 };
