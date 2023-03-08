@@ -80,7 +80,7 @@ export const UserTabRoutes = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/** <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -90,7 +90,7 @@ export const UserTabRoutes = () => {
           ),
           tabBarShowLabel: false,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

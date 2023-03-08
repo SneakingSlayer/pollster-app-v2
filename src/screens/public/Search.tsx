@@ -72,12 +72,6 @@ export const Search = ({ navigation }: HomeTabScreenProps<'Search'>) => {
             },
           ]}
         >
-          <TouchableOpacity
-            style={[{ flex: 1 }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Icon name="chevron-left" size={25} color="#777" />
-          </TouchableOpacity>
           <TextInput
             placeholder="Search polls"
             style={[{ flex: 11, position: 'relative' }, styles.formInput]}
@@ -132,15 +126,6 @@ export const Search = ({ navigation }: HomeTabScreenProps<'Search'>) => {
           </Text>
         </TouchableOpacity>
       )}
-      {/** <Text
-          style={[
-            globalStyles.fontBold,
-            globalStyles.textCenter,
-            { marginTop: 15 },
-          ]}
-        >
-          {msg}
-        </Text> */}
     </SafeAreaView>
   );
 };
