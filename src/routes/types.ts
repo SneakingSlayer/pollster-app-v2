@@ -22,6 +22,7 @@ export type HomeTabParamList = {
     _id: string;
   };
   NewPoll: undefined;
+  Search: undefined;
 };
 
 export type HomeTabScreenProps<T extends keyof HomeTabParamList> =

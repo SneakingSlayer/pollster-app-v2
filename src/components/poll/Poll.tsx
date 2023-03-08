@@ -65,17 +65,6 @@ export const Poll = ({ props }: { props: PollProps }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        {/**<View style={props.voted ? styles.pill : styles.disabledPill}>
-          {props.voted ? (
-            <Text style={[styles.primaryTxt, styles.fontBold, styles.fontSm]}>
-              <Icon name="check" size={12} color="#008CFF" /> Voted
-            </Text>
-          ) : (
-            <Text style={[styles.fontMuted, styles.fontBold, styles.fontSm]}>
-              <Icon name="times" size={12} color="#777" /> Not voted
-            </Text>
-          )}
-        </View> */}
       </View>
     </View>
   );
