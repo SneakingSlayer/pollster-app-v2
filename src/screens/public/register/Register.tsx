@@ -17,7 +17,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FormInput from '../../../components/inputs/FormInput';
 import useRegister from './hooks/useRegister';
 import Footer from '../../../components/footer/Footer';
-export const Register = ({ navigation }: any) => {
+import { useNavigation } from '@react-navigation/native';
+import { Navigation } from '../../../types/globalTypes';
+export const Register = () => {
   const {
     handleChange,
     userValues,
@@ -30,6 +32,8 @@ export const Register = ({ navigation }: any) => {
     success,
     setSuccess,
   } = useRegister();
+
+  const { navigate } = useNavigation<Navigation>();
 
   const inputStyle = (focus: boolean, errors: string) => {
     if (errors) return styles.inputError;
@@ -47,7 +51,7 @@ export const Register = ({ navigation }: any) => {
             <TouchableOpacity
               onPress={() => {
                 setSuccess(false);
-                navigation.navigate('login');
+                navigate('login');
               }}
             >
               <Text style={styles.buttonText}>Sign In</Text>
@@ -145,10 +149,7 @@ export const Register = ({ navigation }: any) => {
         )}
         <Text style={styles.center}>
           Already have an account?{' '}
-          <Text
-            style={styles.textButton}
-            onPress={() => navigation.navigate('login')}
-          >
+          <Text style={styles.textButton} onPress={() => navigate('Login')}>
             Sign in here
           </Text>
         </Text>

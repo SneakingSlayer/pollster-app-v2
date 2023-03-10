@@ -10,14 +10,13 @@ import {
 
 import { AdminPoll } from '../../components/adminPoll/AdminPoll';
 
-import { HomeTabScreenProps } from '../../routes/types';
 import { PollProps } from '../../types/globalTypes';
 
 import { useLazyGetPollsQuery } from '../../redux/services/pollServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { loadPolls, clearPoll } from '../../redux/slices/pollSlice';
 
-export const Polls = ({ navigation }: HomeTabScreenProps<'Poll'>) => {
+export const Polls = () => {
   const [page, setPage] = useState(1);
 
   const [getPolls, { isFetching, data }] = useLazyGetPollsQuery();

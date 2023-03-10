@@ -22,11 +22,24 @@ import { getAuth } from '../redux/slices/authSlice';
 
 import { createNavigationContainerRef } from '@react-navigation/native';
 
-import { CardStyleInterpolators } from '@react-navigation/stack';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+export type PollNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Poll'
+>;
+
+export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  Search: undefined;
+  Route: undefined;
+  Poll: { _id: string };
+};
 
 const navigationRef = createNavigationContainerRef();
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 export const Routes = () => {
@@ -41,20 +54,16 @@ export const Routes = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-      /* screenOptions={{
-          cardStyleInterpolator: CardStyleInterpolators.,
-        }}*/
-      >
+      <Stack.Navigator>
         {!data?.token ? (
           <>
             <Stack.Screen
-              name="login"
+              name="Login"
               component={Login}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="register"
+              name="Register"
               component={Register}
               options={{ headerShown: false }}
             />
@@ -65,17 +74,17 @@ export const Routes = () => {
           data?.role === 'student' ? (
             <>
               <Stack.Screen
-                name="route"
+                name="Route"
                 component={UserTabRoutes}
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="poll"
+                name="Poll"
                 component={Poll}
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="search"
+                name="Search"
                 component={Search}
                 options={{ headerShown: false }}
               />
@@ -83,12 +92,12 @@ export const Routes = () => {
           ) : (
             <>
               <Stack.Screen
-                name="route"
+                name="Route"
                 component={AdminTabRoutes}
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="poll"
+                name="Poll"
                 component={Poll}
                 options={{ headerShown: false }}
               />

@@ -4,6 +4,7 @@ import { authApi } from './services/authServices';
 import { pollApi } from './services/pollServices';
 import { voteApi } from './services/voteServices';
 import { searchApi } from './services/searchServices';
+import { usersApi } from './services/userServices';
 
 import authSlice from './slices/authSlice';
 import pollSlice from './slices/pollSlice';
@@ -14,6 +15,7 @@ export const store = configureStore({
     [pollApi.reducerPath]: pollApi.reducer,
     [voteApi.reducerPath]: voteApi.reducer,
     [searchApi.reducerPath]: searchApi.reducer,
+    [usersApi.reducerPath]: usersApi.reducer,
     polls: pollSlice,
     auth: authSlice,
   },
@@ -22,7 +24,8 @@ export const store = configureStore({
       authApi.middleware,
       pollApi.middleware,
       voteApi.middleware,
-      searchApi.middleware
+      searchApi.middleware,
+      usersApi.middleware
     ),
 });
 

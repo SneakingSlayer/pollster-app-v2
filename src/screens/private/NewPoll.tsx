@@ -1,74 +1,69 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  Button,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { Poll } from '../../components/poll/Poll';
-import { Header } from '../../components/header/Header';
-import { Category } from '../../components/category/Category';
+
 import { globalStyles } from '../../components/globalStyles/GlobalStyles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Modal, Portal, Provider } from 'react-native-paper';
 
-import { BASE_URL } from '../../utils/baseurl';
 import * as ImagePicker from 'expo-image-picker';
 import { ActivityIndicator } from 'react-native-paper';
-import { HomeTabScreenProps } from '../../routes/types';
+
 import { useAddPollMutation } from '../../redux/services/pollServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addPoll as addPolltoState } from '../../redux/slices/pollSlice';
+import { ChoiceProps, PollProps } from '../../types/globalTypes';
 
-export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
+const initialPollValues = {
+  user_id: '',
+  title: '',
+  description: '',
+  img: '',
+  votes: 0,
+  choices: [] as ChoiceProps[],
+};
+
+const containerStyle = {
+  backgroundColor: 'white',
+  padding: 20,
+  marginLeft: 10,
+  marginRight: 10,
+  borderRadius: 15,
+  borderWidth: 0,
+};
+
+export const NewPoll = () => {
   const [visible, setVisible] = useState(false);
-  const [choices, setChoices] = useState([]);
   const [choice, setChoice] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
 
-  const [newPoll, setNewPoll] = useState({
-    user_id: '',
-    title: '',
-    description: '',
-    img: '',
-    votes: 0,
-    choices: [] as any,
-  });
+  const [newPoll, setNewPoll] = useState(initialPollValues);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-  const containerStyle = {
-    backgroundColor: 'white',
-    padding: 20,
-    marginLeft: 10,
-    marginRight: 10,
-    borderRadius: 15,
-    borderWidth: 0,
-  };
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth);
-  const [addPoll] = useAddPollMutation();
-
-  useEffect(() => {}, []);
+  const [addPoll, { isLoading: loading }] = useAddPollMutation();
 
   const onSubmit = async () => {
     try {
       const result = await addPoll({
         payload: { ...newPoll, user_id: user?.id },
       });
-      console.log(result?.data);
-      dispatch(addPolltoState(result?.data));
-    } catch (error) {}
+      setNewPoll(initialPollValues);
+      dispatch(addPolltoState((result as { data: PollProps })?.data));
+    } catch (error) {
+      console.log(error);
+    }
   };
-  console.log(newPoll.choices);
 
   return (
     <Provider>
@@ -97,6 +92,8 @@ export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
             <TouchableOpacity
               style={styles.formButton}
               onPress={() => {
+                setChoice('');
+                setVisible(false);
                 setNewPoll((prev: any) => ({
                   ...prev,
                   choices: [
@@ -117,7 +114,7 @@ export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
           <TextInput
             style={styles.formInput}
             placeholder="Title"
-            defaultValue={title}
+            defaultValue={newPoll.title}
             onChangeText={(e) => setNewPoll((prev) => ({ ...prev, title: e }))}
           />
           <TextInput
@@ -125,7 +122,7 @@ export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
             placeholder="Description"
             multiline
             numberOfLines={4}
-            defaultValue={description}
+            defaultValue={newPoll.description}
             onChangeText={(e) =>
               setNewPoll((prev) => ({ ...prev, description: e }))
             }
@@ -202,7 +199,7 @@ export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: 5, marginBottom: 5 }}>
-              {newPoll.choices?.map((choice, idx) => (
+              {newPoll.choices?.map((choice: ChoiceProps, idx: number) => (
                 <View style={styles.choice} key={idx}>
                   <Text>{choice.choice}</Text>
                   <TouchableOpacity
@@ -233,29 +230,15 @@ export const NewPoll = ({ navigation }: HomeTabScreenProps<'NewPoll'>) => {
             </View>
           </View>
 
-          {loading ? (
-            <View>
-              <ActivityIndicator
-                animating={true}
-                size="large"
-                color="#008CFF"
-              />
-              <Text
-                style={[
-                  globalStyles.fontItalic,
-                  globalStyles.fontMuted,
-                  globalStyles.textCenter,
-                  { marginTop: 10 },
-                ]}
-              >
-                Posting poll...
-              </Text>
-            </View>
-          ) : (
-            <TouchableOpacity style={styles.formButton} onPress={onSubmit}>
-              <Text style={styles.buttonText}>Post</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.formButton} onPress={onSubmit}>
+            <Text style={styles.buttonText}>
+              {loading ? (
+                <ActivityIndicator size="small" color="#008CFF" />
+              ) : (
+                'Post'
+              )}
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </Provider>

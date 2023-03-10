@@ -1,22 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
-  Button,
   SafeAreaView,
-  ScrollView,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import { Poll } from '../../components/poll/Poll';
-import { Header } from '../../components/header/Header';
-import { Category } from '../../components/category/Category';
-import { BASE_URL } from '../../utils/baseurl';
-
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { useLazyGetPollsQuery } from '../../redux/services/pollServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -46,8 +36,6 @@ export const Home = () => {
     handlePaginatedPoll(page);
   }, [page]);
 
-  console.log(polls);
-
   const handleRefresh = () => {
     dispatch(clearPoll());
     setPage(1);
@@ -62,7 +50,6 @@ export const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/**<Category /> */}
       <FlatList
         style={styles.pollsWrapper}
         data={polls}

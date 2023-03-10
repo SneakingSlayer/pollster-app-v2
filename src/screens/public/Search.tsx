@@ -22,13 +22,11 @@ import { useLazySearchPollQuery } from '../../redux/services/searchServices';
 import { PollProps } from '../../types/globalTypes';
 import { ActivityIndicator } from 'react-native-paper';
 
-import { HomeTabScreenProps } from '../../routes/types';
-
-export const Search = ({ navigation }: HomeTabScreenProps<'Search'>) => {
+export const Search = () => {
   // TODO: Implement debouncing & types
 
   const [search, setSearch] = useState('');
-  const [results, setResults] = useState<any>([]);
+  const [results, setResults] = useState<PollProps[]>([]);
   const [isDoneSearching, setIsDoneSearching] = useState(false);
 
   const [searchPoll, { data, error, isFetching }] = useLazySearchPollQuery();
@@ -55,7 +53,7 @@ export const Search = ({ navigation }: HomeTabScreenProps<'Search'>) => {
 
   React.useEffect(() => {
     if (data?.query) {
-      setResults((prev: any) => [...prev, ...data?.query]);
+      setResults((prev) => [...prev, ...data?.query]);
     }
   }, [data]);
 

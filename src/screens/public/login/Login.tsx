@@ -19,8 +19,10 @@ import FormInput from '../../../components/inputs/FormInput';
 import useLogin from './hooks/useLogin';
 
 import Footer from '../../../components/footer/Footer';
+import { useNavigation } from '@react-navigation/native';
+import { Navigation } from '../../../types/globalTypes';
 
-export const Login = ({ navigation }: any) => {
+export const Login = () => {
   const {
     userValues,
     handleChange,
@@ -31,6 +33,8 @@ export const Login = ({ navigation }: any) => {
     focusValues,
     handleBlur,
   } = useLogin();
+
+  const { navigate } = useNavigation<Navigation>();
 
   const inputStyle = (focus: boolean, errors: string) => {
     if (errors) return styles.inputError;
@@ -84,10 +88,7 @@ export const Login = ({ navigation }: any) => {
 
         <Text style={styles.center}>
           Don't have an account?{' '}
-          <Text
-            style={styles.textButton}
-            onPress={() => navigation.navigate('register')}
-          >
+          <Text style={styles.textButton} onPress={() => navigate('Register')}>
             Sign up here
           </Text>
         </Text>

@@ -17,14 +17,15 @@ import { BASE_URL } from '../../utils/baseurl';
 import { useNavigation } from '@react-navigation/native';
 import { formatDate } from '../../utils/dateformat';
 
-import { type PollProps } from '../../types/globalTypes';
-import { RootNavigationProp } from '../../routes/types';
+import { Navigation, type PollProps } from '../../types/globalTypes';
+
 import { useDeletePollMutation } from '../../redux/services/pollServices';
 import { useAppDispatch } from '../../redux/hooks';
 import { deletePoll as deletePollInState } from '../../redux/slices/pollSlice';
+import { PollNavigationProp } from '../../routes/Routes';
 
 export const AdminPoll = ({ props }: { props: PollProps }) => {
-  const navigation = useNavigation<any>();
+  const { navigate } = useNavigation<PollNavigationProp>();
   const [confirm, setConfirm] = useState(false);
 
   const [deletePoll] = useDeletePollMutation();
@@ -108,7 +109,7 @@ export const AdminPoll = ({ props }: { props: PollProps }) => {
                 <TouchableOpacity
                   style={styles.viewPollBtn}
                   onPress={() => {
-                    navigation.navigate('poll', { ...props });
+                    navigate('Poll', { _id: props._id });
                   }}
                 >
                   <Text style={[styles.primaryTxt, styles.fontBold]}>

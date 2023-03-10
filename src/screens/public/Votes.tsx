@@ -21,9 +21,10 @@ import { formatDate } from '../../utils/dateformat';
 
 import { useLazyGetVotesByUserQuery } from '../../redux/services/voteServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { VoteProps } from '../../types/globalTypes';
 
-export const Votes = ({ navigation }) => {
-  const [votes, setVotes] = useState([]);
+export const Votes = () => {
+  const [votes, setVotes] = useState<VoteProps[]>([]);
 
   const user = useAppSelector((state) => state.auth);
 
@@ -84,7 +85,7 @@ export const Votes = ({ navigation }) => {
         </View>
         {data?.currentPage < data?.totalPages && index === votes?.length - 1 ? (
           <TouchableOpacity
-            onPress={() => loadVotes(user?.id, data?.currentPage + 1)}
+            onPress={() => loadVotes(user?.id ?? '', data?.currentPage + 1)}
           >
             <Text
               style={{
@@ -114,7 +115,7 @@ export const Votes = ({ navigation }) => {
             refreshing={isFetching}
             onRefresh={() => {
               setVotes([]);
-              loadVotes(user?.id, 1);
+              loadVotes(user?.id ?? '', 1);
             }}
           />
         }
