@@ -7,8 +7,12 @@ import { Search } from '../screens/public/Search';
 import { Profile } from '../screens/public/Profile';
 import { Header } from '../components/header/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useAppSelector } from '../redux/hooks';
+import { AccessControl } from '../utils/accesscontrol';
 const Tab = createBottomTabNavigator();
 export const AdminTabRoutes = () => {
+  const auth = useAppSelector((state) => state.auth);
+  console.log(auth);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -41,38 +45,42 @@ export const AdminTabRoutes = () => {
           tabBarShowLabel: false,
         }}
       />
-      <Tab.Screen
-        name="Add a Poll"
-        component={NewPoll}
-        options={{
-          headerShown: true,
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="plus-square" size={size} color={color} />
-          ),
-          tabBarLabel: 'Add Poll',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-          },
-          tabBarShowLabel: false,
-        }}
-      />
-      <Tab.Screen
-        name="Users"
-        component={Users}
-        options={{
-          headerShown: true,
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="user-friends" size={size} color={color} />
-          ),
-          tabBarLabel: 'Users',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-          },
-          tabBarShowLabel: false,
-        }}
-      />
+      {auth?.permissions?.includes(AccessControl.can_add_polls) ? (
+        <Tab.Screen
+          name="Add a Poll"
+          component={NewPoll}
+          options={{
+            headerShown: true,
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="plus-square" size={size} color={color} />
+            ),
+            tabBarLabel: 'Add Poll',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 24,
+            },
+            tabBarShowLabel: false,
+          }}
+        />
+      ) : null}
+      {auth?.permissions?.includes(AccessControl.can_edit_users) ? (
+        <Tab.Screen
+          name="Users"
+          component={Users}
+          options={{
+            headerShown: true,
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="user-friends" size={size} color={color} />
+            ),
+            tabBarLabel: 'Users',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 24,
+            },
+            tabBarShowLabel: false,
+          }}
+        />
+      ) : null}
       {/** <Tab.Screen
         name="Profile"
         component={Profile}

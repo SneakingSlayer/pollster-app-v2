@@ -61,9 +61,7 @@ export const Header = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-
     height: '100%',
-
     width: '100%',
     borderBottomWidth: 0.5,
     borderColor: '#ddd',
@@ -80,7 +78,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
     marginTop: 'auto',
   },
   profilePictureWrapper: {

@@ -30,6 +30,8 @@ import { Navigation, PollProps } from '../../types/globalTypes';
 
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../routes/Routes';
+import { Pill } from '../../components/pill/Pill';
+import { ActivityIndicator } from 'react-native';
 
 type PollProp = {
   route: RouteProp<RootStackParamList, 'Poll'>;
@@ -37,8 +39,6 @@ type PollProp = {
 
 export const Poll = ({ route }: PollProp) => {
   const { _id } = route.params;
-
-  console.log(_id);
 
   const [selected, setSelected] = useState({
     user_id: '',
@@ -48,8 +48,6 @@ export const Poll = ({ route }: PollProp) => {
     poster_name: '',
     title: '',
   });
-
-  const [loading, setLoading] = useState(false);
 
   const { goBack } = useNavigation<Navigation>();
   const handleBack = () => goBack();
@@ -170,25 +168,17 @@ export const Poll = ({ route }: PollProp) => {
 
           <View style={hasVoted ? styles.pill : styles.disabledPill}>
             {hasVoted ? (
-              <Text
-                style={[
-                  globalStyles.primaryTxt,
-                  globalStyles.fontBold,
-                  globalStyles.fontSm,
-                ]}
-              >
-                <Icon name="check" size={12} color="#008CFF" /> Voted
-              </Text>
+              <Pill
+                icon={<Icon name="check" size={12} color="#008CFF" />}
+                variant="success"
+                label="Voted"
+              />
             ) : (
-              <Text
-                style={[
-                  globalStyles.fontMuted,
-                  globalStyles.fontBold,
-                  globalStyles.fontSm,
-                ]}
-              >
-                <Icon name="times" size={12} color="#777" /> Not voted
-              </Text>
+              <Pill
+                icon={<Icon name="times" size={12} color="#777" />}
+                variant="muted"
+                label="Not voted"
+              />
             )}
           </View>
         </View>
@@ -255,7 +245,6 @@ export const Poll = ({ route }: PollProp) => {
                     ? 0
                     : choice.votes / poll?.totalVotes
                 }
-                //
                 color={isSelectedOption(idx) ? '#008CFF' : '#ddd'}
                 style={{ height: 20, borderRadius: 7 }}
               />
@@ -263,37 +252,26 @@ export const Poll = ({ route }: PollProp) => {
           ))}
         </ScrollView>
 
-        {hasVoted ? (
-          <TouchableOpacity
-            style={styles.disabledButton}
-            onPress={() => {}}
-            disabled={true}
+        <TouchableOpacity
+          style={
+            isAddingVote || hasVoted ? styles.disabledButton : styles.formButton
+          }
+          onPress={onSubmit}
+          disabled={isAddingVote ? true : false}
+        >
+          <Text
+            style={[
+              globalStyles.fontBold,
+              { textAlign: 'center', color: '#fff' },
+            ]}
           >
-            <Text
-              style={[
-                globalStyles.fontBold,
-                { textAlign: 'center', color: '#fff' },
-              ]}
-            >
-              Vote
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={loading ? styles.disabledButton : styles.formButton}
-            onPress={onSubmit}
-            disabled={loading ? true : false}
-          >
-            <Text
-              style={[
-                globalStyles.fontBold,
-                { textAlign: 'center', color: '#fff' },
-              ]}
-            >
-              Vote
-            </Text>
-          </TouchableOpacity>
-        )}
+            {isAddingVote ? (
+              <ActivityIndicator size="small" color="#ffff" />
+            ) : (
+              'Vote'
+            )}
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

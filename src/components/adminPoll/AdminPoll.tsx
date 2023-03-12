@@ -23,6 +23,8 @@ import { useDeletePollMutation } from '../../redux/services/pollServices';
 import { useAppDispatch } from '../../redux/hooks';
 import { deletePoll as deletePollInState } from '../../redux/slices/pollSlice';
 import { PollNavigationProp } from '../../routes/Routes';
+import { Avatar } from '../avatar/Avatar';
+import { Pill } from '../pill/Pill';
 
 export const AdminPoll = ({ props }: { props: PollProps }) => {
   const { navigate } = useNavigation<PollNavigationProp>();
@@ -44,22 +46,17 @@ export const AdminPoll = ({ props }: { props: PollProps }) => {
       <View style={styles.container}>
         <View style={styles.userWrapper}>
           <View style={styles.user}>
-            <Image
-              style={styles.profilePicture}
-              source={require('../../assets/images/user.jpg')}
-            />
-            <View>
+            <Avatar name={props.firstname} />
+            <View style={{ marginLeft: 5 }}>
               <Text style={[styles.fontSm, styles.fontBold]}>
                 {props.firstname + ' ' + props.lastname}
               </Text>
               <Text style={[styles.fontXs, styles.fontMuted]}>
-                Malayan Colleges
+                {formatDate(props.createdAt)}
               </Text>
             </View>
           </View>
-          <Text style={[styles.fontXs, styles.fontMuted]}>
-            {formatDate(props.createdAt)}
-          </Text>
+          <Pill icon={<></>} label="MMCM" variant="success" />
         </View>
         <View>
           <Text style={styles.pollTitle}>{props.title}</Text>
@@ -73,7 +70,7 @@ export const AdminPoll = ({ props }: { props: PollProps }) => {
           ) : null*/}
         </View>
         <View style={styles.ctaWrapper}>
-          <View style={styles.leftButtons}>
+          <View style={{ ...styles.leftButtons, gap: 10 }}>
             {confirm ? (
               <>
                 <TouchableOpacity onPress={onDelete}>
@@ -98,14 +95,15 @@ export const AdminPoll = ({ props }: { props: PollProps }) => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     width: '100%',
+                    gap: 10,
                   },
                 ]}
               >
-                <TouchableOpacity onPress={() => setConfirm(true)}>
-                  <Text style={[{ color: '#fa2d37' }, styles.fontBold]}>
-                    <Icon name="times" size={15} color="#fa2d37" /> Delete Poll
-                  </Text>
-                </TouchableOpacity>
+                <Text style={[styles.primaryTxt, styles.fontBold]}>
+                  <Icon name="arrow-up" size={13} color="#008CFF" />{' '}
+                  {props.totalVotes} votes
+                </Text>
+
                 <TouchableOpacity
                   style={styles.viewPollBtn}
                   onPress={() => {
@@ -114,6 +112,11 @@ export const AdminPoll = ({ props }: { props: PollProps }) => {
                 >
                   <Text style={[styles.primaryTxt, styles.fontBold]}>
                     <Icon name="heart" size={15} color="#008CFF" /> View Poll
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setConfirm(true)}>
+                  <Text style={[{ color: '#fa2d37' }, styles.fontBold]}>
+                    <Icon name="times" size={15} color="#fa2d37" /> Delete
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -176,9 +179,7 @@ const styles = StyleSheet.create({
   primaryTxt: {
     color: '#008CFF',
   },
-  viewPollBtn: {
-    marginLeft: 10,
-  },
+  viewPollBtn: {},
   pill: {
     backgroundColor: '#EBF5FF',
     paddingLeft: 10,
