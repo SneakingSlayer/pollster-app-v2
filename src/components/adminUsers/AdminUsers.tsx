@@ -32,7 +32,8 @@ export const AdminUsers = ({ admin, openModal }: AdminUserProps) => {
   const [confirm, setConfirm] = useState(false);
   const [removeUser, { data, error }] = useRemoveUserMutation();
   const handleDelete = () => removeUser({ id: admin._id });
-
+  console.log(data);
+  console.log(error);
   return (
     <View style={styles.container}>
       <View>

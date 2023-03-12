@@ -11,6 +11,9 @@
       }
     },
     "preview": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      },
       "distribution": "internal",
       "ios": {
         "resourceClass": "m1-medium"
