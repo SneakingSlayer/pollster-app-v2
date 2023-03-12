@@ -1,127 +1,83 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Button,
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   FlatList,
-  Switch,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import { Poll } from '../../components/poll/Poll';
-import { Header } from '../../components/header/Header';
-import { Category } from '../../components/category/Category';
 import { globalStyles } from '../../components/globalStyles/GlobalStyles';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-
-import { GlobalContext } from '../../context/GlobalState';
-import { BASE_URL } from '../../utils/baseurl';
-import { AdminPoll } from '../../components/adminPoll/AdminPoll';
-import { formatDate } from '../../utils/dateformat';
 import { AdminUsers } from '../../components/adminUsers/AdminUsers';
-import { render } from 'react-dom';
 import { Modal, Portal, Provider } from 'react-native-paper';
-
 import { Picker } from '@react-native-picker/picker';
+import {
+  useLazyGetUsersQuery,
+  useAddPermissionMutation,
+  useRemovePermissionMutation,
+} from '../../redux/services/userServices';
+import { PERMISSIONS } from '../../constants/constants';
+import { UserProps } from '../../types/globalTypes';
 
-export const Users = ({ navigation }) => {
-  const [confirm, setConfirm] = useState(false);
-  const [apiLoading, setApiLoading] = useState(false);
-  const [permissions, setPermissions] = useState([]);
+const containerStyle = {
+  backgroundColor: 'white',
+  padding: 20,
+  marginLeft: 10,
+  marginRight: 10,
+  borderRadius: 15,
+  borderWidth: 0,
+};
 
-  const [users, setUsers] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+export const Users = () => {
+  const [users, setUsers] = React.useState<UserProps[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const hideModal = () => setModalOpen(false);
 
-  const [currentUserID, setCurrentUserID] = useState('');
-  const [currentUserPermissions, setCurrentUserPermissions] = useState([]);
+  const [currentUserID, setCurrentUserID] = React.useState('');
+  const [currentUserPermissions, setCurrentUserPermissions] = React.useState<
+    string[]
+  >([]);
 
-  const [permissionValue, setPermissionValue] = useState('');
+  const [permissionValue, setPermissionValue] = React.useState('');
 
-  const containerStyle = {
-    backgroundColor: 'white',
-    padding: 20,
-    marginLeft: 10,
-    marginRight: 10,
-    borderRadius: 15,
-    borderWidth: 0,
-  };
+  const [getUsers, { data, isFetching }] = useLazyGetUsersQuery();
+  const [
+    addPermissions,
+    { data: addResult, error: addError, isLoading: isAdding },
+  ] = useAddPermissionMutation();
+  const [
+    removePermissions,
+    { data: removeResult, error: removeError, isLoading: isRemoving },
+  ] = useRemovePermissionMutation();
 
-  const handleAddPermissions = () => {
-    setApiLoading(true);
-    if (currentUserID === '' || permissionValue === '') {
-      setApiLoading(false);
-      return;
+  const loadUsers = async (page: number) => {
+    try {
+      const results = await getUsers({ page: page });
+      setUsers((prev) => [...prev, ...results?.data?.users]);
+    } catch (error) {
+      console.log(error);
     }
-    const body = {
-      user_id: currentUserID,
-      permission: permissionValue,
-    };
-
-    fetch(BASE_URL.assign, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setApiLoading(false);
-        console.log(data);
-        setModalOpen(false);
-      })
-      .catch((err) => {
-        setApiLoading(false);
-        setModalOpen(false);
-        console.log(err);
-      });
   };
 
-  const handleRemovePermissions = () => {
-    setApiLoading(true);
-    if (currentUserID === '' || permissionValue === '') {
-      setApiLoading(false);
-      return;
-    }
-    const body = {
-      user_id: currentUserID,
-      permission: permissionValue,
-    };
+  React.useEffect(() => {
+    loadUsers(page);
+  }, [page]);
 
-    fetch(BASE_URL.unassign, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setApiLoading(false);
-        setModalOpen(false);
-        console.log(data);
-      })
-      .catch((err) => {
-        setApiLoading(false);
-        setModalOpen(false);
-        console.log(err);
-      });
+  const renderItem = ({ item }: { item: UserProps }) => {
+    return (
+      <AdminUsers
+        admin={item}
+        openModal={() => {
+          setModalOpen(true);
+          setCurrentUserID(item._id);
+          setCurrentUserPermissions(item.permissions);
+        }}
+      />
+    );
   };
-
-  useEffect(() => {
-    const logout = navigation.addListener('focus', () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);
 
   return (
     <Provider>
@@ -145,15 +101,13 @@ export const Users = ({ navigation }) => {
               style={[{ marginTop: 10, marginBottom: 10 }]}
             >
               <Picker.Item color="ddd" label="Select down below" value="" />
-              {permissions.length > 0
-                ? permissions.map((permission, idx) => (
-                    <Picker.Item
-                      key={idx}
-                      label={permission.name}
-                      value={permission.permission}
-                    />
-                  ))
-                : null}
+              {PERMISSIONS.map((permission, idx) => (
+                <Picker.Item
+                  key={idx}
+                  label={permission.name}
+                  value={permission.permission}
+                />
+              ))}
             </Picker>
             <View
               style={[
@@ -165,62 +119,76 @@ export const Users = ({ navigation }) => {
               ]}
             >
               <TouchableOpacity
-                style={[
-                  {
-                    marginBottom: 10,
-                    padding: 15,
-                    backgroundColor: 'transparent',
-                    borderRadius: 15,
-                    borderWidth: 2,
-                    borderColor: '#008CFF',
-                    overflow: 'hidden',
-                    width: '49%',
-                  },
-                ]}
-                onPress={handleRemovePermissions}
+                style={{
+                  ...styles.formButtonOutline,
+                  opacity: isAdding || isRemoving ? 0.5 : 1,
+                }}
+                onPress={async () => {
+                  await removePermissions({
+                    id: currentUserID,
+                    permission: permissionValue,
+                  });
+                  setModalOpen(false);
+                }}
+                disabled={isAdding || isRemoving}
               >
                 <Text
-                  style={[
-                    {
-                      color: '#008CFF',
-                      textAlign: 'center',
-                    },
-                  ]}
+                  style={{
+                    color: '#008CFF',
+                    textAlign: 'center',
+                  }}
                 >
-                  Unassign
+                  {isRemoving ? (
+                    <ActivityIndicator size="small" color={'#008CFF'} />
+                  ) : (
+                    'Unassign'
+                  )}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.formButton}
-                onPress={handleAddPermissions}
+                style={{
+                  ...styles.formButton,
+                  opacity: isAdding || isRemoving ? 0.5 : 1,
+                }}
+                onPress={async () => {
+                  await addPermissions({
+                    id: currentUserID,
+                    permission: permissionValue,
+                  });
+                  setModalOpen(false);
+                }}
+                disabled={isAdding || isRemoving}
               >
-                <Text style={styles.buttonText}>Assign</Text>
+                <Text style={styles.buttonText}>
+                  {isAdding ? (
+                    <ActivityIndicator size="small" color={'#fff'} />
+                  ) : (
+                    'Assign'
+                  )}
+                </Text>
               </TouchableOpacity>
             </View>
           </Modal>
         </Portal>
-        {users.length > 0 ? (
-          <FlatList
-            style={styles.usersWrapper}
-            data={users}
-            renderItem={({ item }) => (
-              <AdminUsers
-                id={item._id}
-                firstname={item.firstname}
-                lastname={item.lastname}
-                username={item.username}
-                date_created={item.date_created}
-                permissions={item.permissions}
-                openModal={() => {
-                  setModalOpen(true);
-                  setCurrentUserID(item._id);
-                  setCurrentUserPermissions(item.permissions);
-                }}
-              />
-            )}
-            keyExtractor={(user) => user._id}
-          />
-        ) : null}
+
+        <FlatList
+          data={users}
+          renderItem={renderItem}
+          keyExtractor={(_, index) => `${index}key`}
+          onEndReached={() =>
+            setPage((prev) => (prev >= data?.totalPages ? prev : prev + 1))
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={() => {
+                setUsers([]);
+                setPage(1);
+                loadUsers(1);
+              }}
+            />
+          }
+        />
       </SafeAreaView>
     </Provider>
   );
@@ -235,6 +203,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 15,
     backgroundColor: '#008CFF',
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: '#008CFF',
+    overflow: 'hidden',
+    width: '49%',
+  },
+  formButtonOutline: {
+    marginBottom: 10,
+    padding: 15,
+    backgroundColor: 'transparent',
     borderRadius: 15,
     borderWidth: 2,
     borderColor: '#008CFF',

@@ -6,13 +6,16 @@ import { Votes } from '../screens/public/Votes';
 import { Search } from '../screens/public/Search';
 import { Header } from '../components/header/Header';
 import { NewPoll } from '../screens/private/NewPoll';
+import { Users } from '../screens/private/Users';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
+import { useAppSelector } from '../redux/hooks';
+
 import { AccessControl } from '../utils/accesscontrol';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 export const UserTabRoutes = () => {
-  // console.log(data);
+  const data = useAppSelector((state) => state.auth);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -46,7 +49,7 @@ export const UserTabRoutes = () => {
           tabBarShowLabel: false,
         }}
       />
-      {/*!data ? null : data.permissions.includes(AccessControl.can_add_polls) ? (
+      {data?.permissions?.includes(AccessControl.can_add_polls) ? (
         <Tab.Screen
           name="Add a Poll"
           component={NewPoll}
@@ -63,7 +66,26 @@ export const UserTabRoutes = () => {
             tabBarShowLabel: false,
           }}
         />
-        ) : null*/}
+      ) : null}
+      {data?.permissions?.includes(AccessControl.can_edit_users) ? (
+        <Tab.Screen
+          name="Users"
+          component={Users}
+          options={{
+            headerShown: true,
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="user-friends" size={size} color={color} />
+            ),
+            tabBarLabel: 'Users',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 24,
+            },
+            tabBarShowLabel: false,
+          }}
+        />
+      ) : null}
+
       <Tab.Screen
         name="Votes"
         component={Votes}
@@ -80,7 +102,7 @@ export const UserTabRoutes = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/** <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -90,7 +112,7 @@ export const UserTabRoutes = () => {
           ),
           tabBarShowLabel: false,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

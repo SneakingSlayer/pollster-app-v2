@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export const globalStyles = StyleSheet.create({
   fontTitle: {
@@ -17,31 +17,31 @@ export const globalStyles = StyleSheet.create({
     fontSize: 10,
   },
   fontBold: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   fontMuted: {
-    color: "#777",
+    color: '#777',
   },
 
   primaryTxt: {
-    color: "#008CFF",
+    color: '#008CFF',
   },
   viewPollBtn: {
     marginLeft: 10,
   },
   active: {
-    color: "#008CFF",
+    color: '#008CFF',
   },
   textCenter: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   fontItalic: {
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   fontDanger: {
-    color: "#fa2d37",
+    color: '#fa2d37',
   },
   fontLight: {
-    color: "#fff",
+    color: '#fff',
   },
 });

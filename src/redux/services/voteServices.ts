@@ -30,7 +30,17 @@ export const voteApi = createApi({
       }),
       invalidatesTags: ['GET_VOTES'],
     }),
+    getVotesByUser: builder.query({
+      query: ({ id, page }) => ({
+        url: `/api/v2/votes/user/${id}?page=${page}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useLazyGetVotesQuery, useAddVoteMutation } = voteApi;
+export const {
+  useLazyGetVotesQuery,
+  useAddVoteMutation,
+  useLazyGetVotesByUserQuery,
+} = voteApi;

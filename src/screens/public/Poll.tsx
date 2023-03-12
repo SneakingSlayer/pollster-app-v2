@@ -17,11 +17,6 @@ import { RadioButton, ProgressBar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { formatDate } from '../../utils/dateformat';
 import {
-  HomeTabParamList,
-  HomeTabScreenProps,
-  RootNavigationProp,
-} from '../../routes/types';
-import {
   pollApi,
   useLazyGetPollQuery,
 } from '../../redux/services/pollServices';
@@ -31,8 +26,16 @@ import {
 } from '../../redux/services/voteServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { updatePoll } from '../../redux/slices/pollSlice';
+import { Navigation, PollProps } from '../../types/globalTypes';
 
-export const Poll = ({ route }: HomeTabScreenProps<'Poll'>) => {
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../routes/Routes';
+
+type PollProp = {
+  route: RouteProp<RootStackParamList, 'Poll'>;
+};
+
+export const Poll = ({ route }: PollProp) => {
   const { _id } = route.params;
 
   console.log(_id);
@@ -48,8 +51,8 @@ export const Poll = ({ route }: HomeTabScreenProps<'Poll'>) => {
 
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation<any>();
-  const goBack = () => navigation.goBack();
+  const { goBack } = useNavigation<Navigation>();
+  const handleBack = () => goBack();
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth);
@@ -72,7 +75,7 @@ export const Poll = ({ route }: HomeTabScreenProps<'Poll'>) => {
     try {
       const result = await addVote({ payload: selected });
       dispatch(pollApi.util.invalidateTags(['GET_POLL']));
-      dispatch(updatePoll((result as any)?.data));
+      dispatch(updatePoll((result as { data: PollProps })?.data));
     } catch (error) {
       dispatch(pollApi.util.invalidateTags(['GET_POLL']));
     }
@@ -81,8 +84,8 @@ export const Poll = ({ route }: HomeTabScreenProps<'Poll'>) => {
   const hasVoted = votes?.map((vote: any) => vote.user_id)?.includes(user?.id);
 
   const isSelectedOption = (index: number): boolean => {
-    if (isNaN(selected.choice)) return false;
-    if (parseInt(selected.choice) === index) return true;
+    if (parseInt(selected.choice ?? '-1') === index) return true;
+    return false;
   };
 
   console.log(poll?.choices);
@@ -92,7 +95,7 @@ export const Poll = ({ route }: HomeTabScreenProps<'Poll'>) => {
       <View style={styles.upper}>
         <View style={styles.overlay}></View>
         <View style={styles.pollNavigation}>
-          <TouchableOpacity onPress={goBack}>
+          <TouchableOpacity onPress={handleBack}>
             <Icon name="chevron-left" size={25} color="#fff" />
           </TouchableOpacity>
         </View>

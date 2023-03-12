@@ -19,59 +19,32 @@ import { BASE_URL } from '../../utils/baseurl';
 import { AdminPoll } from '../adminPoll/AdminPoll';
 import { formatDate } from '../../utils/dateformat';
 import { Modal, Portal, Provider } from 'react-native-paper';
-export const AdminUsers = (props) => {
-  const { openModal } = props;
 
-  /*const { fetchStart, fetchFinish, data, getCurrentUser } =
-    useContext(GlobalContext);
+import { useRemoveUserMutation } from '../../redux/services/userServices';
+import { UserProps } from '../../types/globalTypes';
+
+interface AdminUserProps {
+  admin: UserProps;
+  openModal: () => void;
+}
+
+export const AdminUsers = ({ admin, openModal }: AdminUserProps) => {
   const [confirm, setConfirm] = useState(false);
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-  const handleDelete = () => {
-    fetchStart();
-    fetch(BASE_URL.delete + `/${props.id}`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        fetchFinish();
-      })
-      .catch((err) => {
-        fetchFinish();
-      });
-  };*/
-
+  const [removeUser, { data, error }] = useRemoveUserMutation();
+  const handleDelete = () => removeUser({ id: admin._id });
+  console.log(data);
+  console.log(error);
   return (
-    <View
-      style={[
-        {
-          flexDirection: 'row',
-          width: '100%',
-          justifyContent: 'space-between',
-          paddingTop: 15,
-          paddingBottom: 15,
-          borderBottomWidth: 0.5,
-          borderBottomColor: '#ddd',
-          paddingLeft: 20,
-          paddingRight: 20,
-        },
-      ]}
-    >
+    <View style={styles.container}>
       <View>
         <Text style={[globalStyles.fontSm, globalStyles.primaryTxt]}>
-          @{props.username}
+          @{admin.username}
         </Text>
         <Text style={[globalStyles.fontBold]}>
-          {props.firstname + ' ' + props.lastname}
+          {admin.firstname + ' ' + admin.lastname}
         </Text>
         <Text style={[globalStyles.fontXs, globalStyles.fontMuted]}>
-          {formatDate(props.date_created)}
+          {formatDate(admin.createdAt)}
         </Text>
       </View>
       {!confirm ? (
@@ -92,7 +65,7 @@ export const AdminUsers = (props) => {
             onPress={() => setConfirm(true)}
           >
             <Text style={[{ color: '#fa2d37' }, globalStyles.fontBold]}>
-              <Icon name="times" size={15} color="#fa2d37" /> Delete
+              <Icon name="times" size={15} color="#fa2d37" /> Remove
             </Text>
           </TouchableOpacity>
         </View>
@@ -100,13 +73,10 @@ export const AdminUsers = (props) => {
         <View style={[{ marginTop: 'auto', flexDirection: 'row' }]}>
           <TouchableOpacity
             style={[{ marginRight: 10 }]}
-            onPress={() => {
-              handleDelete();
-              setConfirm(false);
-            }}
+            onPress={handleDelete}
           >
             <Text style={[globalStyles.primaryTxt, globalStyles.fontBold]}>
-              <Icon name="check" size={15} color="#008CFF" /> Delete this user?
+              <Icon name="check" size={15} color="#008CFF" /> Remove user?
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setConfirm(false)}>
@@ -122,8 +92,15 @@ export const AdminUsers = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    backgroundColor: '#fff',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    paddingTop: 15,
+    paddingBottom: 15,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ddd',
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   usersWrapper: {
     paddingLeft: 20,

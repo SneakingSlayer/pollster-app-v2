@@ -12,9 +12,11 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { formatDate } from '../../utils/dateformat';
-import { PollProps } from '../../types/globalTypes';
+import { Navigation, PollProps } from '../../types/globalTypes';
+import { PollNavigationProp } from '../../routes/Routes';
+
 export const Poll = ({ props }: { props: PollProps }) => {
-  const navigation = useNavigation<any>();
+  const { navigate } = useNavigation<PollNavigationProp>();
 
   return (
     <View style={styles.container}>
@@ -57,7 +59,7 @@ export const Poll = ({ props }: { props: PollProps }) => {
           <TouchableOpacity
             style={styles.viewPollBtn}
             onPress={() => {
-              navigation.navigate('poll', { ...props });
+              navigate('Poll', { _id: props._id });
             }}
           >
             <Text style={[styles.primaryTxt, styles.fontBold]}>
@@ -65,17 +67,6 @@ export const Poll = ({ props }: { props: PollProps }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        {/**<View style={props.voted ? styles.pill : styles.disabledPill}>
-          {props.voted ? (
-            <Text style={[styles.primaryTxt, styles.fontBold, styles.fontSm]}>
-              <Icon name="check" size={12} color="#008CFF" /> Voted
-            </Text>
-          ) : (
-            <Text style={[styles.fontMuted, styles.fontBold, styles.fontSm]}>
-              <Icon name="times" size={12} color="#777" /> Not voted
-            </Text>
-          )}
-        </View> */}
       </View>
     </View>
   );

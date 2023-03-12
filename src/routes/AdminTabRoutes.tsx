@@ -73,7 +73,7 @@ export const AdminTabRoutes = () => {
           tabBarShowLabel: false,
         }}
       />
-      <Tab.Screen
+      {/** <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -83,7 +83,7 @@ export const AdminTabRoutes = () => {
           ),
           tabBarShowLabel: false,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

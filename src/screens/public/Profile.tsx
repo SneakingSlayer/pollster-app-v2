@@ -19,60 +19,14 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { randomColor } from '../../utils/colors';
 import { formatDate } from '../../utils/dateformat';
 
-export const Profile = ({ navigation }) => {
+// TBD
+
+export const Profile = () => {
   const [user, setUser] = useState([]);
   const [votes, setVotes] = useState([]);
-  /*useEffect(() => {
-    getCurrentUser();
-    fetchUser();
-    fetchVotes();
-  }, [loading]);
 
-  const fetchUser = () => {
-    fetch(BASE_URL.user + `/${data.id}`, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUser(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const fetchVotes = () => {
-    fetch(BASE_URL.votes + `/${data.id}`, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${data.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setVotes(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    const logout = navigation.addListener("focus", () => {
-      authChecker();
-    });
-    return logout;
-  }, [navigation]);*/
-
-  return (
-    <SafeAreaView style={styles.container}>
+  return {
+    /** <SafeAreaView style={styles.container}>
       <View style={[styles.upper]}>
         {user.length > 0 ? (
           <View style={[{ position: 'relative', height: '100%' }]}>
@@ -140,8 +94,8 @@ export const Profile = ({ navigation }) => {
       </View>
 
       <View style={[styles.lower]}></View>
-    </SafeAreaView>
-  );
+    </SafeAreaView> */
+  };
 };
 const styles = StyleSheet.create({
   container: { flex: 1 },

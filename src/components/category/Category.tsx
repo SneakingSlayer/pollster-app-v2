@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,9 +8,9 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { globalStyles } from "../globalStyles/GlobalStyles";
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { globalStyles } from '../globalStyles/GlobalStyles';
 export const Category = () => {
   return (
     <SafeAreaView style={styles.container}>
@@ -39,12 +39,12 @@ export const Category = () => {
 };
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
     paddingRight: 20,
     paddingLeft: 20,
   },
   list: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingTop: 10,
     paddingBottom: 10,
   },
