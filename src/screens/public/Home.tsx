@@ -42,6 +42,8 @@ export const Home = () => {
     handlePaginatedPoll(1);
   };
 
+  console.log(polls);
+
   const renderItem = ({ item, index }: { item: PollProps; index: number }) => (
     <View>
       <Poll props={item} />

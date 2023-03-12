@@ -8,6 +8,9 @@ import { PollNavigationProp } from '../../routes/Routes';
 import { Avatar } from '../avatar/Avatar';
 import { Pill } from '../pill/Pill';
 
+import { ProgressBar } from 'react-native-paper';
+import { totalVotes } from '../../utils/totalVotes';
+
 export const Poll = ({ props }: { props: PollProps }) => {
   const { navigate } = useNavigation<PollNavigationProp>();
 
@@ -42,6 +45,33 @@ export const Poll = ({ props }: { props: PollProps }) => {
           <Image style={styles.pollImg} source={{ uri: props.img }} />
         ) : null}
       </View>
+      <View style={{ gap: 7 }}>
+        {props.choices?.map((ic, index) => (
+          <View key={index} style={{ flexDirection: 'column', gap: 7 }}>
+            <View
+              style={{ justifyContent: 'space-between', flexDirection: 'row' }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700' }}>
+                {ic.choice}
+              </Text>
+              <Text style={{ fontSize: 14, fontWeight: '700' }}>
+                {Math.round(
+                  (parseInt(ic.votes as string) / totalVotes(props?.choices)) *
+                    100
+                )}
+                {'%'}
+              </Text>
+            </View>
+            <ProgressBar
+              progress={
+                parseInt(ic.votes as string) / totalVotes(props?.choices)
+              }
+              color={'#008CFF'}
+              style={{ height: 15, borderRadius: 7 }}
+            />
+          </View>
+        ))}
+      </View>
       <View style={styles.ctaWrapper}>
         <View style={styles.leftButtons}>
           <Text style={[styles.primaryTxt, styles.fontBold]}>
@@ -69,7 +99,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     marginBottom: 20,
     borderBottomWidth: 0.5,
-    paddingBottom: 20,
+    paddingBottom: 25,
     borderColor: '#ddd',
   },
   userWrapper: {

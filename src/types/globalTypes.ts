@@ -33,7 +33,7 @@ export interface UserProps {
 
 export interface ChoiceProps {
   choice: string;
-  votes: number;
+  votes: number | string;
 }
 
 export interface Navigation {

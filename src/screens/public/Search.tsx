@@ -22,9 +22,9 @@ import { useLazySearchPollQuery } from '../../redux/services/searchServices';
 import { PollProps } from '../../types/globalTypes';
 import { ActivityIndicator } from 'react-native-paper';
 
-export const Search = () => {
-  // TODO: Implement debouncing & types
+import { Trending } from '../../components/trending/Trending';
 
+export const Search = () => {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<PollProps[]>([]);
   const [isDoneSearching, setIsDoneSearching] = useState(false);
@@ -83,28 +83,35 @@ export const Search = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {!data?.query?.length && isDoneSearching && !isFetching ? (
-        <Text
-          style={{
-            ...globalStyles.textCenter,
-            padding: 20,
-          }}
-        >
-          No results found.
-        </Text>
-      ) : null}
+
       {!results?.length && isFetching ? (
         <View style={{ paddingVertical: 12 }}>
           <ActivityIndicator size={'small'} color="#008CFF" />
         </View>
       ) : null}
 
-      <FlatList
-        style={[styles.resultWrapper]}
-        data={results}
-        renderItem={renderItem}
-        keyExtractor={(result: any, index: number) => `key${index}`}
-      />
+      {isDoneSearching && results?.length > 0 ? (
+        <FlatList
+          style={[styles.resultWrapper]}
+          data={results}
+          renderItem={renderItem}
+          keyExtractor={(result: any, index: number) => `key${index}`}
+        />
+      ) : (
+        <>
+          {!data?.query?.length && isDoneSearching && !isFetching ? (
+            <Text
+              style={{
+                ...globalStyles.textCenter,
+                padding: 20,
+              }}
+            >
+              No results found.
+            </Text>
+          ) : null}
+          <Trending />
+        </>
+      )}
 
       {data?.currentPage < data?.totalPages && (
         <TouchableOpacity
