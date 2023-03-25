@@ -1,43 +1,36 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Button,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { formatDate } from '../../utils/dateformat';
 import { Navigation, PollProps } from '../../types/globalTypes';
 import { PollNavigationProp } from '../../routes/Routes';
+import { Avatar } from '../avatar/Avatar';
+import { Pill } from '../pill/Pill';
+
+import { ProgressBar } from 'react-native-paper';
+import { totalVotes } from '../../utils/totalVotes';
 
 export const Poll = ({ props }: { props: PollProps }) => {
   const { navigate } = useNavigation<PollNavigationProp>();
+  console.log(props?.choices);
 
   return (
     <View style={styles.container}>
       <View style={styles.userWrapper}>
         <View style={styles.user}>
-          <Image
-            style={styles.profilePicture}
-            source={require('../../assets/images/user.jpg')}
-          />
-          <View>
-            <Text style={[styles.fontSm, styles.fontBold]}>
+          <Avatar name={props.firstname} />
+
+          <View style={{ marginLeft: 6 }}>
+            <Text style={{ ...styles.fontSm, ...styles.fontBold }}>
               {props.firstname + ' ' + props.lastname}
             </Text>
             <Text style={[styles.fontXs, styles.fontMuted]}>
-              Malayan Colleges
+              {formatDate(props.createdAt)}
             </Text>
           </View>
         </View>
-        <Text style={[styles.fontXs, styles.fontMuted]}>
-          {formatDate(props.createdAt)}
-        </Text>
+        <Pill icon={<></>} label="MMCM" variant="success" />
       </View>
       <View>
         <Text style={styles.pollTitle}>{props.title}</Text>
@@ -45,16 +38,46 @@ export const Poll = ({ props }: { props: PollProps }) => {
           {props.description}
         </Text>
       </View>
-      <View style={styles.imgWrapper}>
-        {/*props.img !== null ? (
-          <Image style={styles.pollImg} source={{ uri: props.img }} />
-        ) : null*/}
+      <View style={{ gap: 7, marginVertical: 15 }}>
+        {props.choices?.map((ic, index) => (
+          <View key={index} style={{ flexDirection: 'column', gap: 7 }}>
+            <View
+              style={{ justifyContent: 'space-between', flexDirection: 'row' }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700' }}>
+                {ic.choice}
+              </Text>
+              <Text style={{ fontSize: 14, fontWeight: '700' }}>
+                {Math.round(
+                  (parseInt(ic.votes as string) / totalVotes(props?.choices)) *
+                    100
+                ) || 0}
+                {'%'}
+              </Text>
+            </View>
+            {
+              <ProgressBar
+                progress={
+                  parseInt(ic.votes as string) / totalVotes(props?.choices) || 0
+                }
+                color={'#008CFF'}
+                style={{ height: 15, borderRadius: 7 }}
+              />
+            }
+          </View>
+        ))}
       </View>
+      <View style={styles.imgWrapper}>
+        {props.img ? (
+          <Image style={styles.pollImg} source={{ uri: props.img }} />
+        ) : null}
+      </View>
+
       <View style={styles.ctaWrapper}>
         <View style={styles.leftButtons}>
-          <Text style={[styles.fontMuted, styles.fontBold]}>
-            <Icon name="arrow-up" size={15} color="#777" /> {props.totalVotes}{' '}
-            votes
+          <Text style={[styles.primaryTxt, styles.fontBold]}>
+            <Icon name="arrow-up" size={13} color="#008CFF" />{' '}
+            {props.totalVotes} votes
           </Text>
           <TouchableOpacity
             style={styles.viewPollBtn}
@@ -77,7 +100,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     marginBottom: 20,
     borderBottomWidth: 0.5,
-    paddingBottom: 20,
+    paddingBottom: 25,
     borderColor: '#ddd',
   },
   userWrapper: {

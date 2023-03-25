@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "pollster-v2",
+    "name": "Pollster",
     "slug": "pollster-v2",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [

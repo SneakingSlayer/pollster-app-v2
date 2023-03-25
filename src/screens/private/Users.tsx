@@ -56,7 +56,9 @@ export const Users = () => {
   const loadUsers = async (page: number) => {
     try {
       const results = await getUsers({ page: page });
-      setUsers((prev) => [...prev, ...results?.data?.users]);
+      if (results?.data?.users?.length > 0) {
+        setUsers((prev) => [...prev, ...results?.data?.users]);
+      }
     } catch (error) {
       console.log(error);
     }

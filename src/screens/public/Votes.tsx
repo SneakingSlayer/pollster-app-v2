@@ -22,6 +22,8 @@ import { formatDate } from '../../utils/dateformat';
 import { useLazyGetVotesByUserQuery } from '../../redux/services/voteServices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { VoteProps } from '../../types/globalTypes';
+import { Avatar } from '../../components/avatar/Avatar';
+import { Pill } from '../../components/pill/Pill';
 
 export const Votes = () => {
   const [votes, setVotes] = useState<VoteProps[]>([]);
@@ -62,17 +64,21 @@ export const Votes = () => {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              alignItems: 'center',
               marginTop: 5,
+              alignItems: 'flex-start',
+              gap: 5,
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[styles.box]}>
-                <Text style={[globalStyles.fontBold, globalStyles.fontLight]}>
-                  {item.poster_name.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-              <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                maxWidth: 230,
+                gap: 5,
+              }}
+            >
+              <Avatar name={item.poster_name} />
+              <View style={{ marginLeft: 5 }}>
                 <Text style={[globalStyles.fontReg]}>
                   You voted for {item.choice_description} in {item.title}
                 </Text>
@@ -80,6 +86,9 @@ export const Votes = () => {
                   {item.poster_name} {formatDate(item.createdAt)}
                 </Text>
               </View>
+            </View>
+            <View>
+              <Pill label="MMCM" variant="success" icon={<></>} />
             </View>
           </View>
         </View>

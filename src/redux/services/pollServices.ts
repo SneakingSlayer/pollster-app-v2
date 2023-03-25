@@ -29,6 +29,12 @@ export const pollApi = createApi({
       }),
       providesTags: ['GET_POLL'],
     }),
+    getTopPoll: builder.query({
+      query: ({}) => ({
+        url: `/api/v2/top/polls`,
+        method: 'GET',
+      }),
+    }),
     addPoll: builder.mutation({
       query: ({ payload }) => ({
         url: `/api/v2/polls`,
@@ -48,6 +54,7 @@ export const pollApi = createApi({
 export const {
   useLazyGetPollsQuery,
   useLazyGetPollQuery,
+  useLazyGetTopPollQuery,
   useAddPollMutation,
   useDeletePollMutation,
 } = pollApi;

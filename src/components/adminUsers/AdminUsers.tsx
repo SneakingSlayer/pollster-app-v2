@@ -22,6 +22,7 @@ import { Modal, Portal, Provider } from 'react-native-paper';
 
 import { useRemoveUserMutation } from '../../redux/services/userServices';
 import { UserProps } from '../../types/globalTypes';
+import { Avatar } from '../avatar/Avatar';
 
 interface AdminUserProps {
   admin: UserProps;
@@ -31,21 +32,23 @@ interface AdminUserProps {
 export const AdminUsers = ({ admin, openModal }: AdminUserProps) => {
   const [confirm, setConfirm] = useState(false);
   const [removeUser, { data, error }] = useRemoveUserMutation();
-  const handleDelete = () => removeUser({ id: admin._id });
-  console.log(data);
-  console.log(error);
+  const handleDelete = () => removeUser({ id: admin?._id });
+
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={[globalStyles.fontSm, globalStyles.primaryTxt]}>
-          @{admin.username}
-        </Text>
-        <Text style={[globalStyles.fontBold]}>
-          {admin.firstname + ' ' + admin.lastname}
-        </Text>
-        <Text style={[globalStyles.fontXs, globalStyles.fontMuted]}>
-          {formatDate(admin.createdAt)}
-        </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Avatar name={admin.firstname} />
+        <View>
+          <Text style={[globalStyles.fontSm, globalStyles.primaryTxt]}>
+            @{admin.username}
+          </Text>
+          <Text style={[globalStyles.fontBold]}>
+            {admin.firstname + ' ' + admin.lastname}
+          </Text>
+          <Text style={[globalStyles.fontXs, globalStyles.fontMuted]}>
+            {formatDate(admin.createdAt)}
+          </Text>
+        </View>
       </View>
       {!confirm ? (
         <View style={[{ marginTop: 'auto', flexDirection: 'row' }]}>
