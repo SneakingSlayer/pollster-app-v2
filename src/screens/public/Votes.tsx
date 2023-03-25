@@ -66,9 +66,17 @@ export const Votes = () => {
               justifyContent: 'space-between',
               marginTop: 5,
               alignItems: 'flex-start',
+              gap: 5,
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                maxWidth: 230,
+                gap: 5,
+              }}
+            >
               <Avatar name={item.poster_name} />
               <View style={{ marginLeft: 5 }}>
                 <Text style={[globalStyles.fontReg]}>
@@ -79,7 +87,9 @@ export const Votes = () => {
                 </Text>
               </View>
             </View>
-            <Pill label="MMCM" variant="success" icon={<></>} />
+            <View>
+              <Pill label="MMCM" variant="success" icon={<></>} />
+            </View>
           </View>
         </View>
         {data?.currentPage < data?.totalPages && index === votes?.length - 1 ? (
