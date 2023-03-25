@@ -86,7 +86,19 @@ export const Poll = ({ route }: PollProp) => {
     return false;
   };
 
-  console.log(poll?.choices);
+  React.useEffect(() => {
+    if (hasVoted) {
+      const vote = votes?.find((vote: any) => vote.user_id === user?.id);
+      setSelected({
+        user_id: user?.id ?? '',
+        poll_id: poll?._id,
+        choice_description: vote?.choice_description,
+        choice: vote?.choice,
+        poster_name: vote?.poster_name,
+        title: vote?.title,
+      });
+    }
+  }, [hasVoted]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -146,12 +158,12 @@ export const Poll = ({ route }: PollProp) => {
             {formatDate(poll?.createdAt)}
           </Text>
         </View>
-        {/**poll.length > 0 ? (
+        {poll?.img && (
           <ImageBackground
-            source={{ uri: img }}
+            source={{ uri: poll?.img }}
             style={styles.backgroundImage}
           />
-        ) : null*/}
+        )}
       </View>
       {/** */}
       <View style={styles.lower}>
@@ -347,7 +359,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: '#000',
-    opacity: 0.6,
+    opacity: 0.4,
     zIndex: 1,
   },
   pill: {

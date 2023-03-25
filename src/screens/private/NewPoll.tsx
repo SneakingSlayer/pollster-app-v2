@@ -22,6 +22,15 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { addPoll as addPolltoState } from '../../redux/slices/pollSlice';
 import { ChoiceProps, PollProps } from '../../types/globalTypes';
 
+interface PollValues {
+  user_id: string;
+  title: string;
+  description: string;
+  img: string;
+  votes: number;
+  choices: ChoiceProps[];
+}
+
 const initialPollValues = {
   user_id: '',
   title: '',
@@ -51,19 +60,39 @@ export const NewPoll = () => {
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth);
-  const [addPoll, { isLoading: loading }] = useAddPollMutation();
+  const [addPoll, { isLoading: loading, error }] = useAddPollMutation();
 
   const onSubmit = async () => {
     try {
+      if (!newPoll.title || !newPoll.description || !newPoll?.choices?.length)
+        return;
       const result = await addPoll({
         payload: { ...newPoll, user_id: user?.id },
       });
+
       setNewPoll(initialPollValues);
       dispatch(addPolltoState((result as { data: PollProps })?.data));
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      base64: true,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setNewPoll((prev) => ({
+        ...prev,
+        img: `data:image/jpg;base64,${result.assets[0].base64}`,
+      }));
+    }
+  };
+
+  console.log(loading);
 
   return (
     <Provider>
@@ -127,52 +156,68 @@ export const NewPoll = () => {
               setNewPoll((prev) => ({ ...prev, description: e }))
             }
           />
-          {/** <View style={[styles.uploadBox]}>
-            <TouchableOpacity onPress={pickImage}>
-              {image ? (
-                <Text
-                  style={[
-                    globalStyles.fontBold,
-                    globalStyles.primaryTxt,
-                    globalStyles.fontSubtitle,
-                  ]}
+          {/***/}
+          <View style={[styles.uploadBox]}>
+            {newPoll.img ? (
+              <View style={{ width: '100%', position: 'relative' }}>
+                <Image
+                  style={{ ...styles.pollImg }}
+                  source={{ uri: newPoll.img }}
+                />
+                <TouchableOpacity
+                  onPress={() => setNewPoll((prev) => ({ ...prev, img: '' }))}
+                  style={{ top: 10, right: 15, position: 'absolute' }}
                 >
-                  Tap to change image
-                </Text>
-              ) : (
-                <>
-                  <Icon
-                    name="image"
-                    size={36}
-                    style={[
-                      globalStyles.textCenter,
-                      globalStyles.fontMuted,
-                      { marginRight: 5 },
-                    ]}
-                  />
+                  <Icon name="times" size={32} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={handlePickImage}>
+                {false ? (
                   <Text
                     style={[
                       globalStyles.fontBold,
+                      globalStyles.primaryTxt,
                       globalStyles.fontSubtitle,
-                      globalStyles.textCenter,
-                      globalStyles.fontMuted,
                     ]}
                   >
-                    Upload your image here.
+                    Tap to change image
                   </Text>
-                  <Text
-                    style={[
-                      globalStyles.fontMuted,
-                      globalStyles.textCenter,
-                      globalStyles.fontSm,
-                    ]}
-                  >
-                    50mb file size limit, JPG and PNG only.
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>*/}
+                ) : (
+                  <>
+                    <Icon
+                      name="image"
+                      size={36}
+                      style={[
+                        globalStyles.textCenter,
+                        globalStyles.fontMuted,
+                        { marginRight: 5 },
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        globalStyles.fontBold,
+                        globalStyles.fontSubtitle,
+                        globalStyles.textCenter,
+                        globalStyles.fontMuted,
+                      ]}
+                    >
+                      Upload your image here.
+                    </Text>
+                    <Text
+                      style={[
+                        globalStyles.fontMuted,
+                        globalStyles.textCenter,
+                        globalStyles.fontSm,
+                      ]}
+                    >
+                      50mb file size limit, JPG and PNG only.
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
           <View style={{ marginBottom: 10 }}>
             <View
               style={{
@@ -229,8 +274,11 @@ export const NewPoll = () => {
               ) : null}
             </View>
           </View>
-
-          <TouchableOpacity style={styles.formButton} onPress={onSubmit}>
+          <TouchableOpacity
+            style={loading ? styles.disabledButton : styles.formButton}
+            onPress={onSubmit}
+            disabled={loading}
+          >
             <Text style={styles.buttonText}>
               {loading ? (
                 <ActivityIndicator size="small" color="#008CFF" />
@@ -261,6 +309,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
+  imgWrapper: {
+    marginTop: 15,
+  },
   choice: {
     height: 50,
     borderRadius: 15,
@@ -279,9 +330,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  form: {
-    padding: 20,
-  },
+  form: { paddingHorizontal: 20 },
   formButton: {
     marginTop: 5,
     marginBottom: 10,
@@ -291,6 +340,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#fff',
     overflow: 'hidden',
+  },
+  disabledButton: {
+    marginTop: 5,
+    marginBottom: 10,
+    padding: 15,
+    backgroundColor: '#008CFF',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#fff',
+    overflow: 'hidden',
+    opacity: 0.1,
   },
   textButton: {
     color: '#008CFF',
@@ -308,7 +368,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 35,
     marginBottom: 10,
+  },
+  pollImg: {
+    width: '100%',
+    height: 240,
+    borderRadius: 25,
   },
 });

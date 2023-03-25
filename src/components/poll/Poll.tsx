@@ -13,16 +13,14 @@ import { totalVotes } from '../../utils/totalVotes';
 
 export const Poll = ({ props }: { props: PollProps }) => {
   const { navigate } = useNavigation<PollNavigationProp>();
+  console.log(props?.choices);
 
   return (
     <View style={styles.container}>
       <View style={styles.userWrapper}>
         <View style={styles.user}>
           <Avatar name={props.firstname} />
-          {/** <Image
-            style={styles.profilePicture}
-            source={require('../../assets/images/user.jpg')}
-          /> */}
+
           <View style={{ marginLeft: 6 }}>
             <Text style={{ ...styles.fontSm, ...styles.fontBold }}>
               {props.firstname + ' ' + props.lastname}
@@ -40,12 +38,7 @@ export const Poll = ({ props }: { props: PollProps }) => {
           {props.description}
         </Text>
       </View>
-      <View style={styles.imgWrapper}>
-        {props.img ? (
-          <Image style={styles.pollImg} source={{ uri: props.img }} />
-        ) : null}
-      </View>
-      <View style={{ gap: 7 }}>
+      <View style={{ gap: 7, marginVertical: 15 }}>
         {props.choices?.map((ic, index) => (
           <View key={index} style={{ flexDirection: 'column', gap: 7 }}>
             <View
@@ -58,20 +51,28 @@ export const Poll = ({ props }: { props: PollProps }) => {
                 {Math.round(
                   (parseInt(ic.votes as string) / totalVotes(props?.choices)) *
                     100
-                )}
+                ) || 0}
                 {'%'}
               </Text>
             </View>
-            <ProgressBar
-              progress={
-                parseInt(ic.votes as string) / totalVotes(props?.choices)
-              }
-              color={'#008CFF'}
-              style={{ height: 15, borderRadius: 7 }}
-            />
+            {
+              <ProgressBar
+                progress={
+                  parseInt(ic.votes as string) / totalVotes(props?.choices) || 0
+                }
+                color={'#008CFF'}
+                style={{ height: 15, borderRadius: 7 }}
+              />
+            }
           </View>
         ))}
       </View>
+      <View style={styles.imgWrapper}>
+        {props.img ? (
+          <Image style={styles.pollImg} source={{ uri: props.img }} />
+        ) : null}
+      </View>
+
       <View style={styles.ctaWrapper}>
         <View style={styles.leftButtons}>
           <Text style={[styles.primaryTxt, styles.fontBold]}>
